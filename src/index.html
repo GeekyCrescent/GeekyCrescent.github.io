@@ -496,12 +496,99 @@
                 <div class="bd bgc-white">
                   <div class="peers fxw-nw@lg+ ai-s">
                     <div class="peer peer-greed w-70p@lg+ w-100@lg- p-20">
-                      <div class="layers">
-                        <div class="layer w-100 mB-10">
-                          <h6 class="lh-1">Site Visits</h6>
-                        </div>
-                        <div class="layer w-100">
-                          <div id="world-map-marker"></div>
+                    <!-- Progress Bars -->
+
+
+                      <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mapa de Delitos en CDMX</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+</head>
+<body>
+    <h1>Mapa de Delitos en CDMX</h1>
+    <label for="year">Selecciona el año:</label>
+    <select id="year">
+        <option value="2016">2016</option>
+        <option value="2017">2017</option>
+        <option value="2018">2018</option>
+        <option value="2019">2019</option>
+        <option value="2020">2020</option>
+        <option value="2021">2021</option>
+        <option value="2022">2022</option>
+        <option value="2023">2023</option>
+        <option value="2024">2024</option>
+    </select>
+    <div id="map" style="height: 600px;"></div>
+
+    <script>
+        // Crear el mapa base
+        var map = L.map('map').setView([19.432608, -99.133209], 11);
+
+        // Añadir el tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Función para cargar y mostrar los datos
+        function updateMap(year) {
+            d3.csv('nombre_archivo_ord.csv').then(function(data) {
+                // Convertir 'fecha_hecho' a datetime y filtrar datos
+                data.forEach(function(d) {
+                    d.fecha_hecho = new Date(d.fecha_hecho);
+                });
+                var filteredData = data.filter(d => d.fecha_hecho.getFullYear() == year);
+
+                // Agrupar por 'alcaldia_catalogo' y contar delitos
+                var crimeCounts = d3.rollup(filteredData, v => v.length, d => d.alcaldia_catalogo);
+
+                // Limpiar marcadores anteriores
+                map.eachLayer(function (layer) {
+                    if (layer instanceof L.MarkerClusterGroup) {
+                        map.removeLayer(layer);
+                    }
+                });
+
+                // Crear un cluster de marcadores
+                var markers = L.markerClusterGroup();
+
+                // Añadir marcadores para las alcaldías con más delitos
+                crimeCounts.forEach(function(value, key) {
+                    var alcaldia = key;
+                    var crimeCount = value;
+                    var latLon = filteredData.find(d => d.alcaldia_catalogo === alcaldia);
+                    if (latLon) {
+                        var marker = L.marker([latLon.latitud, latLon.longitud])
+                            .bindPopup(`Alcaldía: ${alcaldia}<br>Delitos: ${crimeCount}`);
+                        markers.addLayer(marker);
+                    }
+                });
+
+                map.addLayer(markers);
+            });
+        }
+
+        // Actualizar el mapa cuando se selecciona un año
+        document.getElementById('year').addEventListener('change', function() {
+            updateMap(this.value);
+        });
+
+        // Mostrar el mapa inicial para el año 2023
+        updateMap(2023);
+    </script>
+</body>
+</html>
+
+
+
+
+                          <!-- Progress Bars --> 
                         </div>
                       </div>
                     </div>
