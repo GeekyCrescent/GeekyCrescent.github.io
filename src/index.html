@@ -203,92 +203,9 @@
               <div class="masonry-sizer col-md-6"></div>
               <div class="masonry-item  w-100">
                 <div class="row gap-20">
-                  <!-- #Toatl Visits ==================== -->
-                  <div class='col-md-3'>
-                    <div class="layers bd bgc-white p-20">
-                      <div class="layer w-100 mB-10">
-                        <h6 class="lh-1">Total Visits</h6>
-                      </div>
-                      <div class="layer w-100">
-                        <div class="peers ai-sb fxw-nw">
-                          <div class="peer peer-greed">
-                            <span id="sparklinedash"></span>
-                          </div>
-                          <div class="peer">
-                            <span class="d-ib lh-0 va-m fw-600 bdrs-10em pX-15 pY-15 bgc-green-50 c-green-500">+10%</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
 
-                  <!-- #Total Page Views ==================== -->
-                  <div class='col-md-3'>
-                    <div class="layers bd bgc-white p-20">
-                      <div class="layer w-100 mB-10">
-                        <h6 class="lh-1">Total Page Views</h6>
-                      </div>
-                      <div class="layer w-100">
-                        <div class="peers ai-sb fxw-nw">
-                          <div class="peer peer-greed">
-                            <span id="sparklinedash2"></span>
-                          </div>
-                          <div class="peer">
-                            <span class="d-ib lh-0 va-m fw-600 bdrs-10em pX-15 pY-15 bgc-red-50 c-red-500">-7%</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- #Unique Visitors ==================== -->
-                  <div class='col-md-3'>
-                    <div class="layers bd bgc-white p-20">
-                      <div class="layer w-100 mB-10">
-                        <h6 class="lh-1">Unique Visitor</h6>
-                      </div>
-                      <div class="layer w-100">
-                        <div class="peers ai-sb fxw-nw">
-                          <div class="peer peer-greed">
-                            <span id="sparklinedash3"></span>
-                          </div>
-                          <div class="peer">
-                            <span class="d-ib lh-0 va-m fw-600 bdrs-10em pX-15 pY-15 bgc-purple-50 c-purple-500">~12%</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- #Bounce Rate ==================== -->
-                  <div class='col-md-3'>
-                    <div class="layers bd bgc-white p-20">
-                      <div class="layer w-100 mB-10">
-                        <h6 class="lh-1">Bounce Rate</h6>
-                      </div>
-                      <div class="layer w-100">
-                        <div class="peers ai-sb fxw-nw">
-                          <div class="peer peer-greed">
-                            <span id="sparklinedash4"></span>
-                          </div>
-                          <div class="peer">
-                            <span class="d-ib lh-0 va-m fw-600 bdrs-10em pX-15 pY-15 bgc-blue-50 c-blue-500">33%</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="masonry-item col-12">
-                <!-- #Site Visits ==================== -->
-                <div class="bd bgc-white">
-                  <div class="peers fxw-nw@lg+ ai-s">
-                    <div class="peer peer-greed w-70p@lg+ w-100@lg- p-20">
-                    <!-- Progress Bars -->
-
-
-                      <!DOCTYPE html>
+                  
+                  <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -299,9 +216,24 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <style>
+        .widget {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .widget div {
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 20px;
+            width: 23%;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     <h1>Mapa de Delitos en CDMX</h1>
+    
     <label for="year">Selecciona el año:</label>
     <select id="year">
         <option value="2016">2016</option>
@@ -314,405 +246,109 @@
         <option value="2023">2023</option>
         <option value="2024">2024</option>
     </select>
+
+    <!-- Widgets for displaying data -->
+    <div class="widget">
+        <div id="totalCrimes">Total Crimes: 0</div>
+        <div id="avgCrimes">Average Crimes per Week: 0</div>
+        <div id="commonCrime">Most Common Crime: N/A (0)</div>
+        <div id="timeOfDay">Peak Crime Time: N/A</div>
+    </div>
+
     <div id="map" style="height: 600px;"></div>
 
     <script>
-        // Crear el mapa base
+        // Initialize the map
         var map = L.map('map').setView([19.432608, -99.133209], 11);
 
-        // Añadir el tile layer
+        // Add OpenStreetMap tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Función para cargar y mostrar los datos
-        function updateMap(year) {
+        // Variables to store crime data and markers
+        var crimeData = {};
+        var markerClusterGroup;
+
+        // Function to load data from CSV using D3
+        function loadCrimeData() {
             d3.csv('nombre_archivo_ord.csv').then(function(data) {
-                // Convertir 'fecha_hecho' a datetime y filtrar datos
+                // Process data and store it grouped by year
                 data.forEach(function(d) {
                     d.fecha_hecho = new Date(d.fecha_hecho);
-                });
-                var filteredData = data.filter(d => d.fecha_hecho.getFullYear() == year);
-
-                // Agrupar por 'alcaldia_catalogo' y contar delitos
-                var crimeCounts = d3.rollup(filteredData, v => v.length, d => d.alcaldia_catalogo);
-
-                // Limpiar marcadores anteriores
-                map.eachLayer(function (layer) {
-                    if (layer instanceof L.MarkerClusterGroup) {
-                        map.removeLayer(layer);
+                    var year = d.fecha_hecho.getFullYear();
+                    if (!crimeData[year]) {
+                        crimeData[year] = [];
                     }
+                    crimeData[year].push(d);
                 });
 
-                // Crear un cluster de marcadores
-                var markers = L.markerClusterGroup();
-
-                // Añadir marcadores para las alcaldías con más delitos
-                crimeCounts.forEach(function(value, key) {
-                    var alcaldia = key;
-                    var crimeCount = value;
-                    var latLon = filteredData.find(d => d.alcaldia_catalogo === alcaldia);
-                    if (latLon) {
-                        var marker = L.marker([latLon.latitud, latLon.longitud])
-                            .bindPopup(`Alcaldía: ${alcaldia}<br>Delitos: ${crimeCount}`);
-                        markers.addLayer(marker);
-                    }
-                });
-
-                map.addLayer(markers);
+                // Initial map display for the year 2023
+                updateMap(2023);
             });
         }
 
-        // Actualizar el mapa cuando se selecciona un año
+        // Function to update the map based on the selected year
+        function updateMap(year) {
+            if (markerClusterGroup) {
+                map.removeLayer(markerClusterGroup);
+            }
+
+            // Create a new marker cluster group
+            markerClusterGroup = L.markerClusterGroup();
+
+            // Filter data for the selected year
+            var filteredData = crimeData[year];
+
+            // Add markers for each crime point
+            filteredData.forEach(function(d) {
+                var marker = L.marker([d.latitud, d.longitud]).bindPopup(`<strong>Alcaldía:</strong> ${d.alcaldia_catalogo}<br><strong>Colonia:</strong> ${d.colonia_hecho}`);
+                
+                marker.on('click', function() {
+                    updateWidgets(d.alcaldia_catalogo, filteredData);
+                });
+
+                markerClusterGroup.addLayer(marker);
+            });
+
+            // Add cluster group to the map
+            map.addLayer(markerClusterGroup);
+        }
+
+        // Function to update widgets with relevant data
+        function updateWidgets(alcaldia, data) {
+            // Filter data by the clicked alcaldia
+            var alcaldiaData = data.filter(d => d.alcaldia_catalogo === alcaldia);
+
+            // Calculate total crimes
+            var totalCrimes = alcaldiaData.length;
+
+            // Calculate average crimes per week
+            var weeks = new Set(alcaldiaData.map(d => `${d.fecha_hecho.getFullYear()}-${d3.timeWeek.count(d3.timeYear(d.fecha_hecho), d.fecha_hecho)}`));
+            var avgCrimes = (totalCrimes / weeks.size).toFixed(2);
+
+            // Find the most frequent crime type
+            var crimeTypeCounts = d3.rollup(alcaldiaData, v => v.length, d => d.tipo_delito);
+            var mostCommonCrime = Array.from(crimeTypeCounts).reduce((max, current) => current[1] > max[1] ? current : max, [null, 0]);
+
+            // Find the most common hour for crimes
+            var crimeHourCounts = d3.rollup(alcaldiaData, v => v.length, d => new Date(d.fecha_hecho).getHours());
+            var peakHour = Array.from(crimeHourCounts).reduce((max, current) => current[1] > max[1] ? current : max, [null, 0]);
+
+            // Update widgets with new values
+            document.getElementById('totalCrimes').textContent = `Total Crimes: ${totalCrimes}`;
+            document.getElementById('avgCrimes').textContent = `Average Crimes per Week: ${avgCrimes}`;
+            document.getElementById('commonCrime').textContent = `Most Common Crime: ${mostCommonCrime[0]} (${mostCommonCrime[1]})`;
+            document.getElementById('timeOfDay').textContent = `Peak Crime Time: ${peakHour[0]}:00 (${peakHour[1]})`;
+        }
+
+        // Event listener to update map when year is changed
         document.getElementById('year').addEventListener('change', function() {
             updateMap(this.value);
         });
 
-        // Mostrar el mapa inicial para el año 2023
-        updateMap(2023);
+        // Load crime data when the page is loaded
+        loadCrimeData();
     </script>
 </body>
-</html>
-
-
-
-
-                          <!-- Progress Bars --> 
-                        </div>
-                      </div>
-                    </div>
-                    <div class="peer bdL p-20 w-30p@lg+ w-100p@lg-">
-                      <div class="layers">
-                        <div class="layer w-100">
-                          <!-- Progress Bars -->
-                          <div class="layers">
-                            <div class="layer w-100">
-                              <h5 class="mB-5">100k</h5>
-                              <small class="fw-600 c-grey-700">Visitors From USA</small>
-                              <span class="pull-right c-grey-600 fsz-sm">50%</span>
-                              <div class="progress mT-10">
-                                <div class="progress-bar bgc-deep-purple-500" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width:50%;"> <span class="visually-hidden">50% Complete</span></div>
-                              </div>
-                            </div>
-                            <div class="layer w-100 mT-15">
-                              <h5 class="mB-5">1M</h5>
-                              <small class="fw-600 c-grey-700">Visitors From Europe</small>
-                              <span class="pull-right c-grey-600 fsz-sm">80%</span>
-                              <div class="progress mT-10">
-                                <div class="progress-bar bgc-green-500" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width:80%;"> <span class="visually-hidden">80% Complete</span></div>
-                              </div>
-                            </div>
-                            <div class="layer w-100 mT-15">
-                              <h5 class="mB-5">450k</h5>
-                              <small class="fw-600 c-grey-700">Visitors From Australia</small>
-                              <span class="pull-right c-grey-600 fsz-sm">40%</span>
-                              <div class="progress mT-10">
-                                <div class="progress-bar bgc-light-blue-500" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width:40%;"> <span class="visually-hidden">40% Complete</span></div>
-                              </div>
-                            </div>
-                            <div class="layer w-100 mT-15">
-                              <h5 class="mB-5">1B</h5>
-                              <small class="fw-600 c-grey-700">Visitors From India</small>
-                              <span class="pull-right c-grey-600 fsz-sm">90%</span>
-                              <div class="progress mT-10">
-                                <div class="progress-bar bgc-blue-grey-500" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width:90%;"> <span class="visually-hidden">90% Complete</span></div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- Pie Charts -->
-                          <div class="peers pT-20 mT-20 bdT fxw-nw@lg+ jc-sb ta-c gap-10">
-                            <div class="peer">
-                              <div class="easy-pie-chart" data-size='80' data-percent="75" data-bar-color='#f44336'>
-                                <span></span>
-                              </div>
-                              <h6 class="fsz-sm">New Users</h6>
-                            </div>
-                            <div class="peer">
-                              <div class="easy-pie-chart" data-size='80' data-percent="50" data-bar-color='#2196f3'>
-                                <span></span>
-                              </div>
-                              <h6 class="fsz-sm">New Purchases</h6>
-                            </div>
-                            <div class="peer">
-                              <div class="easy-pie-chart" data-size='80' data-percent="90" data-bar-color='#ff9800'>
-                                <span></span>
-                              </div>
-                              <h6 class="fsz-sm">Bounce Rate</h6>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="masonry-item col-md-6">
-                <!-- #Monthly Stats ==================== -->
-                <div class="bd bgc-white">
-                  <div class="layers">
-                    <div class="layer w-100 pX-20 pT-20">
-                      <h6 class="lh-1">Monthly Stats</h6>
-                    </div>
-                    <div class="layer w-100 p-20">
-                      <canvas id="line-chart" height="220"></canvas>
-                    </div>
-                    <div class="layer bdT p-20 w-100">
-                      <div class="peers ai-c jc-c gapX-20">
-                        <div class="peer">
-                          <span class="fsz-def fw-600 mR-10 c-grey-800">10% <i class="fa fa-level-up c-green-500"></i></span>
-                          <small class="c-grey-500 fw-600">APPL</small>
-                        </div>
-                        <div class="peer fw-600">
-                          <span class="fsz-def fw-600 mR-10 c-grey-800">2% <i class="fa fa-level-down c-red-500"></i></span>
-                          <small class="c-grey-500 fw-600">Average</small>
-                        </div>
-                        <div class="peer fw-600">
-                          <span class="fsz-def fw-600 mR-10 c-grey-800">15% <i class="fa fa-level-up c-green-500"></i></span>
-                          <small class="c-grey-500 fw-600">Sales</small>
-                        </div>
-                        <div class="peer fw-600">
-                          <span class="fsz-def fw-600 mR-10 c-grey-800">8% <i class="fa fa-level-down c-red-500"></i></span>
-                          <small class="c-grey-500 fw-600">Profit</small>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="masonry-item col-md-6">
-                <!-- #Todo ==================== -->
-
-              <div class="masonry-item col-md-6">
-                <!-- #Sales Report ==================== -->
-              <div class="masonry-item col-md-6">
-                <!-- #Weather ==================== -->
-                <div class="bd bgc-white p-20">
-                  <div class="layers">
-                    <!-- Widget Title -->
-                    <div class="layer w-100 mB-20">
-                      <h6 class="lh-1">Weather</h6>
-                    </div>
-
-                    <!-- Today Weather -->
-                    <div class="layer w-100">
-                      <div class="peers ai-c jc-sb fxw-nw">
-                        <div class="peer peer-greed">
-                          <div class="layers">
-                            <!-- Temprature -->
-                            <div class="layer w-100">
-                              <div class="peers fxw-nw ai-c">
-                                <div class="peer mR-20">
-                                  <h3>32<sup>°F</sup></h3>
-                                </div>
-                                <div class="peer">
-                                  <canvas class="sleet" width="44" height="44"></canvas>
-                                </div>
-                              </div>
-                            </div>
-
-                            <!-- Condition -->
-                            <div class="layer w-100">
-                              <span class="fw-600 c-grey-600">Partly Clouds</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="peer">
-                          <div class="layers ai-fe">
-                            <div class="layer">
-                              <h5 class="mB-5">Monday</h5>
-                            </div>
-                            <div class="layer">
-                              <span class="fw-600 c-grey-600">Nov, 01 2017</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Today Weather Extended -->
-                    <div class="layer w-100 mY-30">
-                      <div class="layers bdB">
-                        <div class="layer w-100 bdT pY-5">
-                          <div class="peers ai-c jc-sb fxw-nw">
-                            <div class="peer">
-                              <span>Wind</span>
-                            </div>
-                            <div class="peer ta-r">
-                              <span class="fw-600 c-grey-800">10km/h</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="layer w-100 bdT pY-5">
-                          <div class="peers ai-c jc-sb fxw-nw">
-                            <div class="peer">
-                              <span>Sunrise</span>
-                            </div>
-                            <div class="peer ta-r">
-                              <span class="fw-600 c-grey-800">05:00 AM</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="layer w-100 bdT pY-5">
-                          <div class="peers ai-c jc-sb fxw-nw">
-                            <div class="peer">
-                              <span>Pressure</span>
-                            </div>
-                            <div class="peer ta-r">
-                              <span class="fw-600 c-grey-800">1B</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Week Forecast -->
-                    <div class="layer w-100">
-                      <div class="peers peers-greed ai-fs ta-c">
-                        <div class="peer">
-                          <h6 class="mB-10">MON</h6>
-                          <canvas class="sleet" width="30" height="30"></canvas>
-                          <span class="d-b fw-600">32<sup>°F</sup></span>
-                        </div>
-                        <div class="peer">
-                          <h6 class="mB-10">TUE</h6>
-                          <canvas class="clear-day" width="30" height="30"></canvas>
-                          <span class="d-b fw-600">30<sup>°F</sup></span>
-                        </div>
-                        <div class="peer">
-                          <h6 class="mB-10">WED</h6>
-                          <canvas class="partly-cloudy-day" width="30" height="30"></canvas>
-                          <span class="d-b fw-600">28<sup>°F</sup></span>
-                        </div>
-                        <div class="peer">
-                          <h6 class="mB-10">THR</h6>
-                          <canvas class="cloudy" width="30" height="30"></canvas>
-                          <span class="d-b fw-600">32<sup>°F</sup></span>
-                        </div>
-                        <div class="peer">
-                          <h6 class="mB-10">FRI</h6>
-                          <canvas class="snow" width="30" height="30"></canvas>
-                          <span class="d-b fw-600">24<sup>°F</sup></span>
-                        </div>
-                        <div class="peer">
-                          <h6 class="mB-10">SAT</h6>
-                          <canvas class="wind" width="30" height="30"></canvas>
-                          <span class="d-b fw-600">28<sup>°F</sup></span>
-                        </div>
-                        <div class="peer">
-                          <h6 class="mB-10">SUN</h6>
-                          <canvas class="sleet" width="30" height="30"></canvas>
-                          <span class="d-b fw-600">32<sup>°F</sup></span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="masonry-item col-md-6">
-                <!-- #Chat ==================== -->
-                <div class="bd bgc-white">
-                  <div class="layers">
-                    <div class="layer w-100 p-20">
-                      <h6 class="lh-1">Quick Chat</h6>
-                    </div>
-                    <div class="layer w-100">
-                      <!-- Chat Box -->
-                      <div class="bgc-grey-200 p-20 gapY-15">
-                        <!-- Chat Conversation -->
-                        <div class="peers fxw-nw">
-                          <div class="peer mR-20">
-                            <img class="w-2r bdrs-50p" src="https://randomuser.me/api/portraits/men/11.jpg" alt="">
-                          </div>
-                          <div class="peer peer-greed">
-                            <div class="layers ai-fs gapY-5">
-                              <div class="layer">
-                                <div class="peers fxw-nw ai-c pY-3 pX-10 bgc-white bdrs-2 lh-3/2">
-                                  <div class="peer mR-10">
-                                    <small>10:00 AM</small>
-                                  </div>
-                                  <div class="peer-greed">
-                                    <span>Lorem Ipsum is simply dummy text of</span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="layer">
-                                <div class="peers fxw-nw ai-c pY-3 pX-10 bgc-white bdrs-2 lh-3/2">
-                                  <div class="peer mR-10">
-                                    <small>10:00 AM</small>
-                                  </div>
-                                  <div class="peer-greed">
-                                    <span>the printing and typesetting industry.</span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="layer">
-                                <div class="peers fxw-nw ai-c pY-3 pX-10 bgc-white bdrs-2 lh-3/2">
-                                  <div class="peer mR-10">
-                                    <small>10:00 AM</small>
-                                  </div>
-                                  <div class="peer-greed">
-                                    <span>Lorem Ipsum has been the industry's</span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <!-- Chat Conversation -->
-                        <div class="peers fxw-nw ai-fe">
-                          <div class="peer ord-1 mL-20">
-                            <img class="w-2r bdrs-50p" src="https://randomuser.me/api/portraits/men/12.jpg" alt="">
-                          </div>
-                          <div class="peer peer-greed ord-0">
-                            <div class="layers ai-fe gapY-10">
-                              <div class="layer">
-                                <div class="peers fxw-nw ai-c pY-3 pX-10 bgc-white bdrs-2 lh-3/2">
-                                  <div class="peer mL-10 ord-1">
-                                    <small>10:00 AM</small>
-                                  </div>
-                                  <div class="peer-greed ord-0">
-                                    <span>Heloo</span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="layer">
-                                <div class="peers fxw-nw ai-c pY-3 pX-10 bgc-white bdrs-2 lh-3/2">
-                                  <div class="peer mL-10 ord-1">
-                                    <small>10:00 AM</small>
-                                  </div>
-                                  <div class="peer-greed ord-0">
-                                    <span>??</span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- Chat Send -->
-                      <div class="p-20 bdT bgc-white">
-                        <div class="pos-r">
-                          <input type="text" class="form-control bdrs-10em m-0" placeholder="Say something...">
-                          <button type="button" class="btn btn-primary bdrs-50p w-2r p-0 h-2r pos-a r-1 t-1">
-                            <i class="fa fa-paper-plane-o"></i>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </main>
-
-        <!-- ### $App Screen Footer ### -->
-        <footer class="bdT ta-c p-30 lh-0 fsz-sm c-grey-600">
-          <span>Copyright © 2024 Cocoteros.  All rights reserved.</span>
-        </footer>
-      </div>
-    </div>
-  </body>
 </html>
