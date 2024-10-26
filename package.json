@@ -1,8 +1,8 @@
 {
-  "name": "chat-app",
+  "name": "nombre-del-proyecto",
   "version": "1.0.0",
   "private": true,
-  "description": "HTML Admin Template",
+  "homepage": "https://GeekyCrescent.github.io", 
   "scripts": {
     "start": "parcel src/chat.html",
     "dev": "webpack-dashboard -t 'Project' -- webpack server",
@@ -13,7 +13,9 @@
     "preview": "cross-env webpack server",
     "lint:js": "eslint ./src ./webpack ./*.js -f table --ext .js --ext .jsx",
     "lint:scss": "stylelint ./src/**/*.scss --syntax scss",
-    "lint": "npm run lint:js && npm run lint:scss"
+    "lint": "npm run lint:js && npm run lint:scss",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "devDependencies": {
     "@babel/core": "^7.24.5",
@@ -35,6 +37,7 @@
     "eslint": "^8.55.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.29.1",
+    "gh-pages": "^6.2.0",
     "html-webpack-plugin": "^5.6.0",
     "imagemin-webpack-plugin": "^2.4.2",
     "mini-css-extract-plugin": "^2.9.0",
@@ -61,6 +64,7 @@
     "@fullcalendar/timegrid": "^6.1.11",
     "@google/generative-ai": "^0.21.0",
     "@popperjs/core": "^2.11.6",
+    "axios": "^1.7.7",
     "babel-polyfill": "^6.26.0",
     "bootstrap": "^5.3.3",
     "bootstrap-datepicker": "^1.9.0",

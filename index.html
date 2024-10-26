@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Dashboard</title>
+
+    <style>
+      #loader {
+        transition: all 0.3s ease-in-out;
+        opacity: 1;
+        visibility: visible;
+        position: fixed;
+        height: 100vh;
+        width: 100%;
+        background: #fff;
+        z-index: 90000;
+      }
+
+      #loader.fadeOut {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .spinner {
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        top: calc(50% - 20px);
+        left: calc(50% - 20px);
+        background-color: #333;
+        border-radius: 100%;
+        -webkit-animation: sk-scaleout 1.0s infinite ease-in-out;
+        animation: sk-scaleout 1.0s infinite ease-in-out;
+      }
+
+      @-webkit-keyframes sk-scaleout {
+        0% { -webkit-transform: scale(0) }
+        100% {
+          -webkit-transform: scale(1.0);
+          opacity: 0;
+        }
+      }
+
+      @keyframes sk-scaleout {
+        0% {
+          -webkit-transform: scale(0);
+          transform: scale(0);
+        } 100% {
+          -webkit-transform: scale(1.0);
+          transform: scale(1.0);
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body class="app">
+    <!-- @TOC -->
+    <!-- =================================================== -->
+    <!--
+      + @Page Loader
+      + @App Content
+          - #Left Sidebar
+              > $Sidebar Header
+              > $Sidebar Menu
+
+          - #Main
+              > $Topbar
+              > $App Screen Content
+    -->
+
+    <!-- @Page Loader -->
+    <!-- =================================================== -->
+    <div id='loader'>
+      <div class="spinner"></div>
+    </div>
+
+    <script>
+      window.addEventListener('load', function load() {
+        const loader = document.getElementById('loader');
+        setTimeout(function() {
+          loader.classList.add('fadeOut');
+        }, 300);
+      });
+    </script>
+
+    <!-- @App Content -->
+    <!-- =================================================== -->
+    <div>
+      <!-- #Left Sidebar ==================== -->
+      <div class="sidebar">
+        <div class="sidebar-inner">
+          <!-- ### $Sidebar Header ### -->
+          <div class="sidebar-logo">
+            <div class="peers ai-c fxw-nw">
+              <div class="peer peer-greed">
+                <a class="sidebar-link td-n" href="src\index.html">
+                  <div class="peers ai-c fxw-nw">
+                    <div class="peer">
+                      <div class="logo">
+                      </div>
+                    </div>
+                    <div class="peer peer-greed">
+                      <h5 class="lh-1 mB-0 logo-text">Dashboard againts criminals</h5>
+                    </div>
+                  </div>
+                </a>
+              </div>
+              <div class="peer">
+                <div class="mobile-toggle sidebar-toggle">
+                  <a href="" class="td-n">
+                    <i class="ti-arrow-circle-left"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ### $Sidebar Menu ### -->
+          <ul class="sidebar-menu scrollable pos-r">
+            <li class="nav-item mT-30 actived">
+              <a class="sidebar-link" href="src\index.html">
+                <span class="icon-holder">
+                  <i class="c-blue-500 ti-home"></i>
+                </span>
+                <span class="title">Dashboard</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class='sidebar-link' href="src\charts.html">
+                <span class="icon-holder">
+                  <i class="c-indigo-500 ti-bar-chart"></i>
+                </span>
+                <span class="title">Gráficas</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class='sidebar-link' href="src\chat.html">
+                <span class="icon-holder">
+                  <i class="c-deep-purple-500 ti-comment-alt"></i>
+                </span>
+                <span class="title">Chat</span>
+              </a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="dropdown-toggle" href="javascript:void(0);">
+                <span class="icon-holder">
+                  <i class="c-orange-500 ti-layout-list-thumb"></i>
+                </span>
+                <span class="title">Tabla de Datos</span>
+                <span class="arrow">
+                  <i class="ti-angle-right"></i>
+                </span>
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a class='sidebar-link' href="src\datatable.html">Data Table</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="dropdown-toggle" href="javascript:void(0);">
+                <span class="icon-holder">
+                    <i class="c-purple-500 ti-map"></i>
+                  </span>
+                <span class="title">Maps</span>
+                <span class="arrow">
+                    <i class="ti-angle-right"></i>
+                  </span>
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a href="src\vector-maps.html">Vector Map</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- #Main ============================ -->
+      <div class="page-container">
+        <!-- ### $Topbar ### -->
+        <div class="header navbar">
+          <div class="header-container">
+            <ul class="nav-left">
+              <li>
+                <a id='sidebar-toggle' class="sidebar-toggle" href="javascript:void(0);">
+                  <i class="ti-menu"></i>
+                </a>
+              </li>
+            </ul>
+            <ul class="nav-right">
+          </div>
+        </div>
+
+        <!-- ### $App Screen Content ### -->
+        <main class='main-content bgc-grey-100'>
+          <div id='mainContent'>
+            <div class="row gap-20 masonry pos-r">
+              <div class="masonry-sizer col-md-6"></div>
+              <div class="masonry-item  w-100">
+                <div class="row gap-20">
+
+                  
+                  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mapa de Delitos en CDMX</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <style>
+        .widget {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .widget div {
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 20px;
+            width: 23%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mapa de Delitos en CDMX</h1>
+    
+    <label for="year">Selecciona el año:</label>
+    <select id="year">
+        <option value="2016">2016</option>
+        <option value="2017">2017</option>
+        <option value="2018">2018</option>
+        <option value="2019">2019</option>
+        <option value="2020">2020</option>
+        <option value="2021">2021</option>
+        <option value="2022">2022</option>
+        <option value="2023">2023</option>
+        <option value="2024">2024</option>
+    </select>
+
+    <!-- Widgets for displaying data -->
+    <div class="widget">
+        <div id="totalCrimes">Total Crimes: 0</div>
+        <div id="avgCrimes">Average Crimes per Week: 0</div>
+        <div id="commonCrime">Most Common Crime: N/A (0)</div>
+        <div id="timeOfDay">Peak Crime Time: N/A</div>
+    </div>
+
+    <div id="map" style="height: 600px;"></div>
+
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([19.432608, -99.133209], 11);
+
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Variables to store crime data and markers
+        var crimeData = {};
+        var markerClusterGroup;
+
+        // Function to load data from CSV using D3
+        function loadCrimeData() {
+            d3.csv('nombre_archivo_ord.csv').then(function(data) {
+                // Process data and store it grouped by year
+                data.forEach(function(d) {
+                    d.fecha_hecho = new Date(d.fecha_hecho);
+                    var year = d.fecha_hecho.getFullYear();
+                    if (!crimeData[year]) {
+                        crimeData[year] = [];
+                    }
+                    crimeData[year].push(d);
+                });
+
+                // Initial map display for the year 2023
+                updateMap(2023);
+            });
+        }
+
+        // Function to update the map based on the selected year
+        function updateMap(year) {
+            if (markerClusterGroup) {
+                map.removeLayer(markerClusterGroup);
+            }
+
+            // Create a new marker cluster group
+            markerClusterGroup = L.markerClusterGroup();
+
+            // Filter data for the selected year
+            var filteredData = crimeData[year];
+
+            // Add markers for each crime point
+            filteredData.forEach(function(d) {
+                var marker = L.marker([d.latitud, d.longitud]).bindPopup(`<strong>Alcaldía:</strong> ${d.alcaldia_catalogo}<br><strong>Colonia:</strong> ${d.colonia_hecho}`);
+                
+                marker.on('click', function() {
+                    updateWidgets(d.alcaldia_catalogo, filteredData);
+                });
+
+                markerClusterGroup.addLayer(marker);
+            });
+
+            // Add cluster group to the map
+            map.addLayer(markerClusterGroup);
+        }
+
+        // Function to update widgets with relevant data
+        function updateWidgets(alcaldia, data) {
+            // Filter data by the clicked alcaldia
+            var alcaldiaData = data.filter(d => d.alcaldia_catalogo === alcaldia);
+
+            // Calculate total crimes
+            var totalCrimes = alcaldiaData.length;
+
+            // Calculate average crimes per week
+            var weeks = new Set(alcaldiaData.map(d => `${d.fecha_hecho.getFullYear()}-${d3.timeWeek.count(d3.timeYear(d.fecha_hecho), d.fecha_hecho)}`));
+            var avgCrimes = (totalCrimes / weeks.size).toFixed(2);
+
+            // Find the most frequent crime type
+            var crimeTypeCounts = d3.rollup(alcaldiaData, v => v.length, d => d.tipo_delito);
+            var mostCommonCrime = Array.from(crimeTypeCounts).reduce((max, current) => current[1] > max[1] ? current : max, [null, 0]);
+
+            // Find the most common hour for crimes
+            var crimeHourCounts = d3.rollup(alcaldiaData, v => v.length, d => new Date(d.fecha_hecho).getHours());
+            var peakHour = Array.from(crimeHourCounts).reduce((max, current) => current[1] > max[1] ? current : max, [null, 0]);
+
+            // Update widgets with new values
+            document.getElementById('totalCrimes').textContent = `Total Crimes: ${totalCrimes}`;
+            document.getElementById('avgCrimes').textContent = `Average Crimes per Week: ${avgCrimes}`;
+            document.getElementById('commonCrime').textContent = `Most Common Crime: ${mostCommonCrime[0]} (${mostCommonCrime[1]})`;
+            document.getElementById('timeOfDay').textContent = `Peak Crime Time: ${peakHour[0]}:00 (${peakHour[1]})`;
+        }
+
+        // Event listener to update map when year is changed
+        document.getElementById('year').addEventListener('change', function() {
+            updateMap(this.value);
+        });
+
+        // Load crime data when the page is loaded
+        loadCrimeData();
+    </script>
+</body>
+</html>
