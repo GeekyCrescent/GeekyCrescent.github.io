@@ -48,127 +48,208 @@ export default (function () {
   // ------------------------------------------------------
 
   const barChartBox = document.getElementById('bar-chart');
-
-  if (barChartBox) {
+  const yearFilter = document.getElementById('year-filter');
+  
+  if (barChartBox && yearFilter) {
       const barCtx = barChartBox.getContext('2d');
+      let chart; // Store chart instance for future updates
   
-      // Cargar datos desde CSV y luego inicializar el gráfico
-      d3.csv("nombre_archivo.csv").then(data => {
-          // Asumiendo que el CSV tiene columnas como 'alcaldia_hecho', 'delito', y 'anio_inicio'
-          const labels = [];
-          const alcaldiaData = [];
-          const delitoData = [];
-  
-          // Agrupar datos por 'alcaldia_hecho' y 'delito', y contar los casos
-          const groupData = d3.rollup(data, v => v.length, d => d.alcaldia_catalogo, d => d.categoria_delito);
-  
-          // Convertir los datos agrupados a formato para el gráfico
-          groupData.forEach((delitos, alcaldia) => {
-              labels.push(alcaldia);
-              let count = 0;
-              delitos.forEach((delitoCount) => count += delitoCount);
-              alcaldiaData.push(count);
+      // Load data from CSV and initialize the chart
+      d3.csv("nombre_archivo_ord.csv").then(data => {
+          // Extract unique years from 'fecha_hecho' column
+          const years = Array.from(new Set(data.map(d => new Date(d.fecha_hecho).getFullYear())));
+          years.sort().forEach(year => {
+              const option = document.createElement("option");
+              option.value = year;
+              option.textContent = year;
+              yearFilter.appendChild(option);
           });
   
-          // Definir colores
-          const COLORS = {
-              'deep-purple-500': 'rgba(103, 58, 183, 0.5)',
-              'deep-purple-800': 'rgba(74, 20, 140, 0.8)',
-          };
+          // Initial chart load with all data
+          updateChart("all");
   
-          // Crear el gráfico de barras
-          new Chart(barCtx, {
-              type: 'bar',
-              data: {
-                  labels: labels,
-                  datasets: [
-                      {
-                          label: 'Casos por Alcaldía',
-                          backgroundColor: COLORS['deep-purple-500'],
-                          borderColor: COLORS['deep-purple-800'],
-                          borderWidth: 1,
-                          data: alcaldiaData,
-                      },
-                  ],
-              },
+          // Event listener for year filter
+          yearFilter.addEventListener("change", (event) => {
+              updateChart(event.target.value);
+          });
   
-              options: {
-                  responsive: true,
-                  plugins: {
-                      legend: {
-                          position: 'bottom',
-                      },
+          function updateChart(selectedYear) {
+              // Filter data by selected year
+              const filteredData = selectedYear === "all" 
+                  ? data 
+                  : data.filter(d => new Date(d.fecha_hecho).getFullYear() === parseInt(selectedYear));
+  
+              // Group data by 'alcaldia_catalogo' and count cases
+              const labels = [];
+              const alcaldiaData = [];
+              const groupData = d3.rollup(filteredData, v => v.length, d => d.alcaldia_catalogo);
+  
+              // Format data for the chart
+              groupData.forEach((count, alcaldia) => {
+                  labels.push(alcaldia);
+                  alcaldiaData.push(count);
+              });
+  
+              // Define colors
+              const COLORS = {
+                  'deep-purple-500': 'rgba(103, 58, 183, 0.5)',
+                  'deep-purple-800': 'rgba(74, 20, 140, 0.8)',
+              };
+  
+              // Destroy old chart if it exists, then create a new one
+              if (chart) chart.destroy();
+              chart = new Chart(barCtx, {
+                  type: 'bar',
+                  data: {
+                      labels: labels,
+                      datasets: [
+                          {
+                              label: 'Casos por Alcaldía',
+                              backgroundColor: COLORS['deep-purple-500'],
+                              borderColor: COLORS['deep-purple-800'],
+                              borderWidth: 1,
+                              data: alcaldiaData,
+                          },
+                      ],
                   },
-              },
-          });
+                  options: {
+                      responsive: true,
+                      plugins: {
+                          legend: {
+                              position: 'bottom',
+                          },
+                      },
+                      scales: {
+                          x: {
+                              ticks: {
+                                  autoSkip: false,
+                                  maxRotation: 45,
+                                  minRotation: 45,
+                              }
+                          }
+                      }
+                  },
+              });
+          }
       });
   }
+  
   
 
   // ------------------------------------------------------
   // @Area Charts
   // ------------------------------------------------------
 
-  const areaChartBox = document.getElementById('area-chart');
+  const barChartBox2 = document.getElementById('bar-chart2');
+const yearFilter2 = document.getElementById('year-filter'); // Ensure this is the correct filter ID
+const alcaldiaFilter2 = document.getElementById('alcaldia-filter');
 
-  if (areaChartBox) {
-    const areaCtx = areaChartBox.getContext('2d');
+if (barChartBox2 && yearFilter2 && alcaldiaFilter2) {
+    const barCtx = barChartBox2.getContext('2d');
+    let chart; // Store chart instance for future updates
 
-    new Chart(areaCtx, {
-      type: 'line',
-      data: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-        datasets: [{
-          backgroundColor : 'rgba(3, 169, 244, 0.5)',
-          borderColor     : COLORS['light-blue-800'],
-          data            : [10, 50, 20, 40, 60, 30, 70],
-          label           : 'Dataset',
-          fill            : 'start',
-        }],
-      },
+    // Load data from CSV and initialize the chart
+    d3.csv("nombre_archivo_ord.csv").then(data => {
+        // Extract unique alcaldías from 'alcaldia_catalogo' column
+        const alcaldias = Array.from(new Set(data.map(d => d.alcaldia_catalogo)));
+        alcaldias.sort().forEach(alcaldia => {
+            const option = document.createElement("option");
+            option.value = alcaldia;
+            option.textContent = alcaldia;
+            alcaldiaFilter2.appendChild(option); // Add options to alcaldiaFilter2
+        });
+
+        // Initial chart load with all data
+        updateChart("all", "all"); // Add default value for alcaldía filter
+
+        // Event listener for year filter
+        yearFilter2.addEventListener("change", (event) => {
+            updateChart(event.target.value, alcaldiaFilter2.value);
+        });
+
+        // Event listener for alcaldía filter
+        alcaldiaFilter2.addEventListener("change", (event) => {
+            updateChart(yearFilter2.value, event.target.value);
+        });
+
+        function updateChart(selectedYear, selectedAlcaldia) {
+            // Filter data by selected year
+            const filteredData = selectedYear === "all" 
+                ? data 
+                : data.filter(d => new Date(d.fecha_hecho).getFullYear() === parseInt(selectedYear));
+
+            // Further filter by selected alcaldía
+            const finalData = selectedAlcaldia === "all" 
+                ? filteredData 
+                : filteredData.filter(d => d.alcaldia_catalogo === selectedAlcaldia);
+
+            // Group data by 'categoria_delito' and count occurrences
+            const groupData = d3.rollup(finalData, v => v.length, d => d.categoria_delito);
+
+            // Convert grouped data to an array and sort by count
+            const sortedGroupData = Array.from(groupData)
+                .sort((a, b) => b[1] - a[1]) // Sort by count in descending order
+                .slice(0, 6); // Limit to the top 6 categories
+
+            // Prepare labels and data for the chart
+            const labels = sortedGroupData.map(([categoria]) => categoria);
+            const delitoData = sortedGroupData.map(([, count]) => count);
+
+            // Define colors
+            const COLORS = {
+                'deep-purple-500': 'rgba(103, 58, 183, 0.5)',
+                'deep-purple-800': 'rgba(74, 20, 140, 0.8)',
+            };
+
+            // Destroy old chart if it exists, then create a new one
+            if (chart) chart.destroy();
+            chart = new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Casos por Categoría de Delito',
+                            backgroundColor: COLORS['deep-purple-500'],
+                            borderColor: COLORS['deep-purple-800'],
+                            borderWidth: 1,
+                            data: delitoData,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    indexAxis: 'y', // Set indexAxis to 'y' for horizontal bars
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true, // Ensure the x-axis starts at 0
+                        },
+                        y: {
+                            ticks: {
+                                autoSkip: false,
+                            },
+                        },
+                    },
+                },
+            });
+        }
     });
-  }
+}
 
   // ------------------------------------------------------
   // @Scatter Charts
   // ------------------------------------------------------
 
-  const scatterChartBox = document.getElementById('scatter-chart');
 
-  if (scatterChartBox) {
-    const scatterCtx = scatterChartBox.getContext('2d');
 
-    new Chart(scatterCtx, {
-      type: 'scatter',
-      data: {
-        datasets: [{
-          label           : 'My First dataset',
-          borderColor     : COLORS['red-500'],
-          backgroundColor : COLORS['red-500'],
-          data: [
-            { x: 10, y: 20 },
-            { x: 30, y: 40 },
-            { x: 50, y: 60 },
-            { x: 70, y: 80 },
-            { x: 90, y: 100 },
-            { x: 110, y: 120 },
-            { x: 130, y: 140 },
-          ],
-        }, {
-          label           : 'My Second dataset',
-          borderColor     : COLORS['green-500'],
-          backgroundColor : COLORS['green-500'],
-          data: [
-            { x: 150, y: 160 },
-            { x: 170, y: 180 },
-            { x: 190, y: 200 },
-            { x: 210, y: 220 },
-            { x: 230, y: 240 },
-            { x: 250, y: 260 },
-            { x: 270, y: 280 },
-          ],
-        }],
-      },
-    });
-  }
+// Cargar el archivo CSV
+
+// Cargar el archivo CSV
+
+
 }())

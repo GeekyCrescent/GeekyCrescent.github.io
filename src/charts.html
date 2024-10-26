@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Charts</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
     <style>
       #loader {
@@ -415,24 +417,30 @@
               </div>
               <div class="masonry-item col-md-6">
                 <div class="bgc-white p-20 bd">
-                  <h6 class="c-grey-900">Area Chart</h6>
+                  <h6 class="c-grey-900">Delitos Por Alcaldía</h6>
                   <div class="mT-30">
-                    <canvas id="area-chart" height="220"></canvas>
+                    <select id="alcaldia-filter" class="form-control mb-2">
+                      <option value="all">Alcaldias</option>
+                    </select>
+                    <canvas id="bar-chart2" height="220"></canvas>
                   </div>
                 </div>
               </div>
               <div class="masonry-item col-md-6">
                 <div class="bgc-white p-20 bd">
-                  <h6 class="c-grey-900">Scatter Chart</h6>
+                  <h6 class="c-grey-900"><Map></Map></h6>
                   <div class="mT-30">
-                    <canvas id="scatter-chart" height="220"></canvas>
+                    <canvas id="map" height="220"></canvas>
                   </div>
                 </div>
               </div>
               <div class="masonry-item col-md-6">
                 <div class="bgc-white p-20 bd">
-                  <h6 class="c-grey-900">Bar Chart</h6>
+                  <h6 class="c-grey-900" style="text-align: center;">Delitos Por Año</h6>
                   <div class="mT-30">
+                    <select id="year-filter" class="form-control mb-2">
+                      <option value="all">All Years</option>
+                    </select>
                     <canvas id="bar-chart" height="220"></canvas>
                   </div>
                 </div>
