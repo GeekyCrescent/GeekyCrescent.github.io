@@ -337,9 +337,88 @@ if (lineChartBox && yearFilter3 && delitoFilter3 && alcaldiaFilter3) {
 }
 
 
-// ------------------------------------------------------
-// @Hour Charts
-// ------------------------------------------------------
+const pieChartBox = document.getElementById('pie-chart');
+const yearDropdown = document.getElementById('year-filter');
+const crimeTypeDropdown = document.getElementById('delito-filter');
+const boroughDropdown = document.getElementById('alcaldia-filter');
+
+if (pieChartBox && yearDropdown && crimeTypeDropdown && boroughDropdown) {
+    const pieCtx = pieChartBox.getContext('2d');
+    let pieChart;
+
+    d3.csv("nuevo_ultimo.csv").then(data => {
+
+        updatePieChart("all", "all");
+
+        yearDropdown.addEventListener("change", (event) => {
+            updatePieChart(event.target.value, crimeTypeDropdown.value, boroughDropdown.value);
+        });
+
+        crimeTypeDropdown.addEventListener("change", (event) => {
+            updatePieChart(yearDropdown.value, event.target.value, boroughDropdown.value);
+        });
+
+        boroughDropdown.addEventListener("change", (event) => {
+            updatePieChart(yearDropdown.value, crimeTypeDropdown.value, event.target.value);
+        });
+
+        function updatePieChart(selectedYear, selectedCrimeType, selectedBorough) {
+            const filteredData = selectedYear === "all"
+                ? data
+                : data.filter(d => new Date(d.fecha_hecho).getFullYear() === parseInt(selectedYear));
+
+            const crimeFilteredData = selectedCrimeType === "all"
+                ? filteredData
+                : filteredData.filter(d => d.categoria_delito === selectedCrimeType);
+
+            const finalData = selectedBorough === "all"
+                ? crimeFilteredData
+                : crimeFilteredData.filter(d => d.alcaldia_catalogo === selectedBorough);
+
+            const groupData = d3.rollup(finalData, v => v.length, d => d.dia_de_la_semana);
+
+            const sortedGroupData = Array.from(groupData).sort((a, b) => a[0] - b[0]);
+
+            const weekDays = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+            const labels = sortedGroupData.map(([day]) => weekDays[day]);
+            const countData = sortedGroupData.map(([, count]) => count);
+
+            const COLORS = [
+                'rgba(255, 99, 132, 0.5)',
+                'rgba(54, 162, 235, 0.5)',
+                'rgba(255, 206, 86, 0.5)',
+                'rgba(75, 192, 192, 0.5)',
+                'rgba(153, 102, 255, 0.5)',
+                'rgba(255, 159, 64, 0.5)',
+                'rgba(99, 255, 132, 0.5)',
+            ];
+
+            if (pieChart) pieChart.destroy();
+            pieChart = new Chart(pieCtx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Casos por Día de la Semana',
+                        backgroundColor: COLORS,
+                        borderColor: 'rgba(255, 255, 255, 1)',
+                        borderWidth: 1,
+                        data: countData,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                    },
+                },
+            });
+        }
+    });
+}
+
 
 
 
