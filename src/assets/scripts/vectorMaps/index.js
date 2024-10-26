@@ -1,94 +1,102 @@
-import * as $ from 'jquery';
-import 'jvectormap';
-import 'jvectormap/jquery-jvectormap.css';
-import './jquery-jvectormap-world-mill.js';
-import { debounce } from 'lodash';
+import Chart from 'chart.js/auto';
 
 export default (function () {
-  const vectorMapInit = () => {
-    if ($('#world-map-marker').length > 0) {
-      // This is a hack, as the .empty() did not do the work
-      $('#vmap').remove();
+  const lineChartBox = document.getElementById('line-chart');
+  const yearFilter = document.getElementById('year-filter');
+  
+  if (lineChartBox) {
+      const lineCtx = lineChartBox.getContext('2d');
+      let chart; // Guarda la instancia del gráfico para actualizaciones futuras
 
-      // we recreate (after removing it) the container div, to reset all the data of the map
-      $('#world-map-marker').append(`
-        <div
-          id="vmap"
-          style="
-            height: 490px;
-            position: relative;
-            overflow: hidden;
-            background-color: transparent;
-          "
-        >
-        </div>
-      `);
+      // Cargar datos desde el CSV y inicializar el gráfico
+      d3.csv("predicciones_finales.csv").then(data => {
+          // Extraer años únicos de la columna 'Fecha'
+          const years = Array.from(new Set(data.map(d => new Date(d.Fecha).getFullYear())));
+          years.sort().forEach(year => {
+              const option = document.createElement("option");
+              option.value = year;
+              option.textContent = year;
+              yearFilter.appendChild(option);
+          });
 
-      $('#vmap').vectorMap({
-        map: 'world_mill',
-        backgroundColor: '#fff',
-        borderColor: '#fff',
-        borderOpacity: 0.25,
-        borderWidth: 0,
-        color: '#e6e6e6',
-        regionStyle : {
-          initial : {
-            fill : '#e4ecef',
-          },
-        },
+          // Cargar gráfico inicial con todos los datos
+          updateChart("all");
 
-        markerStyle: {
-          initial: {
-            r: 7,
-            'fill': '#fff',
-            'fill-opacity':1,
-            'stroke': '#000',
-            'stroke-width' : 2,
-            'stroke-opacity': 0.4,
-          },
-        },
+          // Escuchar cambios en el filtro de año
+          yearFilter.addEventListener("change", (event) => {
+              updateChart(event.target.value);
+          });
 
-        markers : [{
-          latLng : [21.00, 78.00],
-          name : 'INDIA : 350',
-        }, {
-          latLng : [-33.00, 151.00],
-          name : 'Australia : 250',
-        }, {
-          latLng : [36.77, -119.41],
-          name : 'USA : 250',
-        }, {
-          latLng : [55.37, -3.41],
-          name : 'UK   : 250',
-        }, {
-          latLng : [25.20, 55.27],
-          name : 'UAE : 250',
-        }],
-        series: {
-          regions: [{
-            values: {
-              'US': 298,
-              'SA': 200,
-              'AU': 760,
-              'IN': 200,
-              'GB': 120,
-            },
-            scale: ['#03a9f3', '#02a7f1'],
-            normalizeFunction: 'polynomial',
-          }],
-        },
-        hoverOpacity: null,
-        normalizeFunction: 'linear',
-        zoomOnScroll: false,
-        scaleColors: ['#b6d6ff', '#005ace'],
-        selectedColor: '#c9dfaf',
-        selectedRegions: [],
-        enableZoom: false,
-        hoverColor: '#fff',
+          function updateChart(selectedYear) {
+              // Filtrar datos por año seleccionado
+              const filteredData = selectedYear === "all" 
+                  ? data 
+                  : data.filter(d => new Date(d.Fecha).getFullYear() === parseInt(selectedYear));
+
+              // Agrupar datos por 'Alcaldía' y calcular la predicción total de delitos
+              const labels = [];
+              const alcaldiaData = [];
+              const groupData = d3.rollup(filteredData, 
+                  v => d3.sum(v, d => +d['Predicción de Delitos']), 
+                  d => d.Alcaldía
+              );
+
+              // Formatear datos para el gráfico
+              groupData.forEach((prediccion, alcaldia) => {
+                  labels.push(alcaldia);
+                  alcaldiaData.push(prediccion);
+              });
+
+              // Colores
+              const COLORS = {
+                'deep-blue-500': 'rgba(54, 162, 235, 0.5)',
+                'deep-blue-800': 'rgba(54, 162, 235, 0.8)',
+              };
+
+              // Destruir el gráfico anterior si existe y crear uno nuevo
+              if (chart) chart.destroy();
+              chart = new Chart(lineCtx, {
+                  type: 'line',
+                  data: {
+                      labels: labels,
+                      datasets: [
+                          {
+                              label: 'Predicción de Delitos por Alcaldía',
+                              backgroundColor: COLORS['deep-blue-500'],
+                              borderColor: COLORS['deep-blue-800'],
+                              borderWidth: 2,
+                              data: alcaldiaData,
+                              fill: false,
+                              tension: 0.4, // Suavizar las líneas
+                          },
+                      ],
+                  },
+                  options: {
+                      responsive: true,
+                      plugins: {
+                          legend: {
+                              position: 'bottom',
+                          },
+                      },
+                      scales: {
+                          x: {
+                              ticks: {
+                                  autoSkip: false,
+                                  maxRotation: 45,
+                                  minRotation: 45,
+                              }
+                          },
+                          y: {
+                              beginAtZero: true,
+                              title: {
+                                  display: true,
+                                  text: 'Predicción de Delitos',
+                              }
+                          }
+                      }
+                  },
+              });
+          }
       });
-    }
-  };
-
-  vectorMapInit();
-  $(window).resize(debounce(vectorMapInit, 150));
-})();
+  }
+}());

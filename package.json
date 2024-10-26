@@ -61,6 +61,7 @@
     "@fullcalendar/timegrid": "^6.1.11",
     "@google/generative-ai": "^0.21.0",
     "@popperjs/core": "^2.11.6",
+    "axios": "^1.7.7",
     "babel-polyfill": "^6.26.0",
     "bootstrap": "^5.3.3",
     "bootstrap-datepicker": "^1.9.0",
