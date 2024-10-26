@@ -1,215 +1,244 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Vector Maps</title>
-    <style>
-      #loader {
-        transition: all 0.3s ease-in-out;
-        opacity: 1;
-        visibility: visible;
-        position: fixed;
-        height: 100vh;
-        width: 100%;
-        background: #fff;
-        z-index: 90000;
-      }
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Line Chart - Actual vs Predicted Crimes</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    /* Loader and page styling */
+    #loader {
+      transition: all 0.3s ease-in-out;
+      opacity: 1;
+      visibility: visible;
+      position: fixed;
+      height: 100vh;
+      width: 100%;
+      background: #fff;
+      z-index: 90000;
+    }
 
-      #loader.fadeOut {
+    #loader.fadeOut {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      position: absolute;
+      top: calc(50% - 20px);
+      left: calc(50% - 20px);
+      background-color: #333;
+      border-radius: 100%;
+      animation: sk-scaleout 1.0s infinite ease-in-out;
+    }
+
+    @keyframes sk-scaleout {
+      0% { transform: scale(0); }
+      100% {
+        transform: scale(1.0);
         opacity: 0;
-        visibility: hidden;
       }
+    }
 
+    /* Chart styling */
+    .line {
+      fill: none;
+      stroke-width: 2px;
+    }
 
+    .axis-label {
+      font-size: 12px;
+      font-family: sans-serif;
+    }
 
-      .spinner {
-        width: 40px;
-        height: 40px;
-        position: absolute;
-        top: calc(50% - 20px);
-        left: calc(50% - 20px);
-        background-color: #333;
-        border-radius: 100%;
-        -webkit-animation: sk-scaleout 1.0s infinite ease-in-out;
-        animation: sk-scaleout 1.0s infinite ease-in-out;
-      }
+    .tooltip {
+      position: absolute;
+      text-align: center;
+      width: 120px;
+      padding: 5px;
+      background-color: lightsteelblue;
+      border-radius: 5px;
+      pointer-events: none;
+      opacity: 0;
+    }
+  </style>
+</head>
+<body class="app">
 
-      @-webkit-keyframes sk-scaleout {
-        0% { -webkit-transform: scale(0) }
-        100% {
-          -webkit-transform: scale(1.0);
-          opacity: 0;
-        }
-      }
+  <!-- Page Loader -->
+  <div id='loader'>
+    <div class="spinner"></div>
+  </div>
 
-      @keyframes sk-scaleout {
-        0% {
-          -webkit-transform: scale(0);
-          transform: scale(0);
-        } 100% {
-          -webkit-transform: scale(1.0);
-          transform: scale(1.0);
-          opacity: 0;
-        }
-      }
-    </style>
-  </head>
-  <body class="app">
-    <!-- @TOC -->
-    <!-- =================================================== -->
-    <!--
-      + @Page Loader
-      + @App Content
-          - #Left Sidebar
-              > $Sidebar Header
-              > $Sidebar Menu
+  <script>
+    window.addEventListener('load', function() {
+      const loader = document.getElementById('loader');
+      setTimeout(() => {
+        loader.classList.add('fadeOut');
+      }, 300);
+    });
+  </script>
 
-          - #Main
-              > $Topbar
-              > $App Screen Content
-    -->
-
-    <!-- @Page Loader -->
-    <!-- =================================================== -->
-    <div id='loader'>
-      <div class="spinner"></div>
+  <!-- Main Content -->
+  <div class="page-container">
+    <div class="header navbar">
+      <div class="header-container">
+        <ul class="nav-left">
+          <li>
+            <a id='sidebar-toggle' class="sidebar-toggle" href="javascript:void(0);">
+              <i class="ti-menu"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
 
-    <script>
-      window.addEventListener('load', function load() {
-        const loader = document.getElementById('loader');
-        setTimeout(function() {
-          loader.classList.add('fadeOut');
-        }, 300);
-      });
-    </script>
-
-    <!-- @App Content -->
-    <!-- =================================================== -->
-    <div>
-      <!-- #Left Sidebar ==================== -->
-      <div class="sidebar">
-        <div class="sidebar-inner">
-          <!-- ### $Sidebar Header ### -->
-          <div class="sidebar-logo">
-            <div class="peers ai-c fxw-nw">
-              <div class="peer peer-greed">
-                <a class="sidebar-link td-n" href="index.html">
-                  <div class="peers ai-c fxw-nw">
-                    <div class="peer">
-                      <div class="logo">
-                
-                      </div>
-                    </div>
-                    <div class="peer peer-greed">
-                      <h5 class="lh-1 mB-0 logo-text">Dashboard againts criminals</h5>
-                    </div>
-                  </div>
-                </a>
-              </div>
-              <div class="peer">
-                <div class="mobile-toggle sidebar-toggle">
-                  <a href="" class="td-n">
-                    <i class="ti-arrow-circle-left"></i>
-                  </a>
-                </div>
-              </div>
+    <!-- Chart Section -->
+    <main class='main-content bgc-grey-100'>
+      <div id='mainContent'>
+        <div class="container-fluid">
+          <h4 class="c-grey-900 mT-10 mB-30">Vector Maps</h4>
+          <div class="bgc-white p-20 bd">
+            <h6 class="c-grey-900">Line Chart</h6>
+            <div class="mT-30">
+              <svg width="900" height="500"></svg>
             </div>
           </div>
-
-          <!-- ### $Sidebar Menu ### -->
-          <ul class="sidebar-menu scrollable pos-r">
-            <li class="nav-item mT-30 actived">
-              <a class="sidebar-link" href="index.html">
-                <span class="icon-holder">
-                  <i class="c-blue-500 ti-home"></i>
-                </span>
-                <span class="title">Dashboard</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class='sidebar-link' href="charts.html">
-                <span class="icon-holder">
-                  <i class="c-indigo-500 ti-bar-chart"></i>
-                </span>
-                <span class="title">Gráficas</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class='sidebar-link' href="chat.html">
-                <span class="icon-holder">
-                  <i class="c-deep-purple-500 ti-comment-alt"></i>
-                </span>
-                <span class="title">Chat</span>
-              </a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="dropdown-toggle" href="javascript:void(0);">
-                <span class="icon-holder">
-                  <i class="c-orange-500 ti-layout-list-thumb"></i>
-                </span>
-                <span class="title">Tabla de Datos</span>
-                <span class="arrow">
-                  <i class="ti-angle-right"></i>
-                </span>
-              </a>
-              <ul class="dropdown-menu">
-                  <a class='sidebar-link' href="datatable.html">Data Table</a>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="dropdown-toggle" href="javascript:void(0);">
-                <span class="icon-holder">
-                    <i class="c-purple-500 ti-map"></i>
-                  </span>
-                <span class="title">Maps</span>
-                <span class="arrow">
-                    <i class="ti-angle-right"></i>
-                  </span>
-              </a>
-              <ul class="dropdown-menu">
-                <li>
-                  <a href="vector-maps.html">Vector Map</a>
-                </li>
-              </ul>
-            </li>
-          </ul>
         </div>
       </div>
+    </main>
 
-      <!-- #Main ============================ -->
-      <div class="page-container">
-        <!-- ### $Topbar ### -->
-        <div class="header navbar">
-          <div class="header-container">
-            <ul class="nav-left">
-              <li>
-                <a id='sidebar-toggle' class="sidebar-toggle" href="javascript:void(0);">
-                  <i class="ti-menu"></i>
-                </a>
-              </li>
-          </div>
-        </div>
+    <script>
+      // Chart dimensions and margins
+      const margin = { top: 20, right: 30, bottom: 50, left: 60 };
+      const width = 900 - margin.left - margin.right;
+      const height = 500 - margin.top - margin.bottom;
 
-        <!-- ### $App Screen Content ### -->
-        <main class='main-content bgc-grey-100'>
-          <div id='mainContent'>
-            <div class="container-fluid">
-              <h4 class="c-grey-900 mT-10 mB-30">Vector Maps</h4>
-              <div class="bgc-white p-20 bd">
-                <h6 class="c-grey-900">Line Chart</h6>
-                <div class="mT-30">
-                  <canvas id="line-chart" height="250"></canvas>
-                </div>
-              </div>
+      // Create SVG container
+      const svg = d3.select("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
 
-        <!-- ### $App Screen Footer ### -->
-        <footer class="bdT ta-c p-30 lh-0 fsz-sm c-grey-600">
-          <span>Copyright © 2024 Cocoteros. All rights reserved.</span>
-        </footer>
-      </div>
-    </div>
-  </body>
+      // Define date parser
+      const parseDate = d3.timeParse("%Y-%m-%d");
+
+      // Create scales
+      const x = d3.scaleTime().range([0, width]);
+      const y = d3.scaleLinear().range([height, 0]);
+
+      // Define the actual and predicted line paths
+      const actualLine = d3.line()
+        .x(d => x(d.date))
+        .y(d => y(d.actual_count));
+
+      const predictedLine = d3.line()
+        .x(d => x(d.date))
+        .y(d => y(d.predicted_count));
+
+      // Colors for the lines
+      const actualColor = "steelblue";
+      const predictedColor = "red";
+
+      // Tooltip div
+      const tooltip = d3.select("body").append("div")
+        .attr("class", "tooltip");
+
+      // Load and process both CSV files
+      Promise.all([
+        d3.csv("nombre_archivo_ord.csv", d => ({
+          date: parseDate(d.fecha_hecho),
+          actual_count: +d.count
+        })),
+        d3.csv("Predicciones_finales.csv", d => ({
+          date: parseDate(d.fecha_prediccion),
+          predicted_count: +d.predicted_count
+        }))
+      ]).then(function(data) {
+        const actualData = data[0];
+        const predictedData = data[1];
+
+        // Merge both datasets by date
+        const combinedData = actualData.map(d => {
+          const predicted = predictedData.find(p => +p.date === +d.date);
+          return {
+            date: d.date,
+            actual_count: d.actual_count,
+            predicted_count: predicted ? predicted.predicted_count : null
+          };
+        });
+
+        // Set domains for the scales
+        x.domain(d3.extent(combinedData, d => d.date));
+        y.domain([0, d3.max(combinedData, d => Math.max(d.actual_count, d.predicted_count))]);
+
+        // Add X-axis
+        svg.append("g")
+          .attr("transform", `translate(0,${height})`)
+          .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%b %Y")))
+          .append("text")
+          .attr("x", width / 2)
+          .attr("y", 40)
+          .attr("fill", "black")
+          .attr("class", "axis-label")
+          .text("Date");
+
+        // Add Y-axis
+        svg.append("g")
+          .call(d3.axisLeft(y))
+          .append("text")
+          .attr("x", -height / 2)
+          .attr("y", -50)
+          .attr("fill", "black")
+          .attr("class", "axis-label")
+          .attr("transform", "rotate(-90)")
+          .text("Number of Crimes");
+
+        // Draw actual line
+        svg.append("path")
+          .datum(combinedData)
+          .attr("class", "line")
+          .attr("stroke", actualColor)
+          .attr("d", actualLine);
+
+        // Draw predicted line
+        svg.append("path")
+          .datum(combinedData)
+          .attr("class", "line")
+          .attr("stroke", predictedColor)
+          .style("stroke-dasharray", ("3, 3"))
+          .attr("d", predictedLine);
+
+        // Add interactive points with tooltips
+        svg.selectAll(".dot")
+          .data(combinedData)
+          .enter().append("circle")
+          .attr("cx", d => x(d.date))
+          .attr("cy", d => y(d.actual_count))
+          .attr("r", 5)
+          .attr("fill", actualColor)
+          .on("mouseover", function(event, d) {
+            tooltip.transition().duration(200).style("opacity", .9);
+            tooltip.html(`Date: ${d3.timeFormat("%b %Y")(d.date)}<br>Actual: ${d.actual_count}<br>Predicted: ${d.predicted_count}`)
+              .style("left", (event.pageX + 5) + "px")
+              .style("top", (event.pageY - 28) + "px");
+          })
+          .on("mouseout", function() {
+            tooltip.transition().duration(500).style("opacity", 0);
+          });
+      }).catch(function(error) {
+        console.error("Error loading data:", error);
+      });
+
+    </script>
+
+    <!-- Footer -->
+    <footer class="bdT ta-c p-30 lh-0 fsz-sm c-grey-600">
+      <span>Copyright © 2024 Cocoteros. All rights reserved.</span>
+    </footer>
+  </div>
+</body>
 </html>
