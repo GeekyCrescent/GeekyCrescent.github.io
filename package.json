@@ -59,7 +59,6 @@
     "@fullcalendar/interaction": "^6.1.11",
     "@fullcalendar/list": "^6.1.11",
     "@fullcalendar/timegrid": "^6.1.11",
-    "@google/generative-ai": "^1.0.0",
     "@popperjs/core": "^2.11.6",
     "babel-polyfill": "^6.26.0",
     "bootstrap": "^5.3.3",
