@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Vector Maps</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Agregar Chart.js -->
     <style>
       #loader {
         transition: all 0.3s ease-in-out;
@@ -20,8 +21,6 @@
         opacity: 0;
         visibility: hidden;
       }
-
-
 
       .spinner {
         width: 40px;
@@ -155,6 +154,7 @@
                 </span>
               </a>
               <ul class="dropdown-menu">
+                <li>
                   <a class='sidebar-link' href="datatable.html">Data Table</a>
                 </li>
               </ul>
@@ -162,12 +162,12 @@
             <li class="nav-item dropdown">
               <a class="dropdown-toggle" href="javascript:void(0);">
                 <span class="icon-holder">
-                    <i class="c-purple-500 ti-map"></i>
-                  </span>
+                  <i class="c-purple-500 ti-map"></i>
+                </span>
                 <span class="title">Maps</span>
                 <span class="arrow">
-                    <i class="ti-angle-right"></i>
-                  </span>
+                  <i class="ti-angle-right"></i>
+                </span>
               </a>
               <ul class="dropdown-menu">
                 <li>
