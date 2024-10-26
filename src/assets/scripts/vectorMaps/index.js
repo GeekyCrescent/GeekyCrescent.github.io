@@ -1,65 +1,90 @@
-Chart.register(ChartjsAdapterDateFns); // Register the date adapter
+import Chart from 'chart.js/auto';
 
-function createLinePlot(predData, hechoData) {
-    const ctx = document.getElementById('line-chart2').getContext('2d');
+const lineChartBox = document.getElementById('line-chart2');
 
-    const predDates = predData.map(d => d.Fecha);
-    const predValues = predData.map(d => d['Predicción de Delitos']);
+if (lineChartBox) {
+  const lineCtx = lineChartBox.getContext('2d');
+  let chart;
 
-    const hechoDates = hechoData.map(d => d.fecha_hecho);
-    const hechoValues = hechoData.map(d => 1); // Usar 1 como valor arbitrario
+  // Cargar los datos de ambos CSV
+  Promise.all([
+    d3.csv("Predicciones_finales.csv"),
+    d3.csv("nombre_archivo_ord.csv")
+  ]).then(([prediccionesData, nombreData]) => {
+    
+    // Procesar datos de Predicciones_finales
+    const prediccionesPorFecha = d3.rollup(
+      prediccionesData,
+      v => d3.sum(v, d => +d['Predicción de Delitos']),
+      d => d.Fecha
+    );
+    
+    // Procesar datos de nombre_archivo_ord
+    const casosPorFecha = d3.rollup(
+      nombreData,
+      v => v.length,
+      d => d.fecha_hecho
+    );
+    
+    // Convertir datos a formato de Chart.js
+    const labels = Array.from(new Set([...prediccionesPorFecha.keys(), ...casosPorFecha.keys()])).sort();
+    const prediccionesDataset = labels.map(label => prediccionesPorFecha.get(label) || 0);
+    const casosDataset = labels.map(label => casosPorFecha.get(label) || 0);
 
-    const chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [...predDates, ...hechoDates],
-            datasets: [
-                {
-                    label: 'Predicción de Delitos',
-                    data: predValues,
-                    borderColor: 'blue',
-                    fill: false,
-                },
-                {
-                    label: 'Hechos',
-                    data: hechoValues,
-                    borderColor: 'red',
-                    fill: false,
-                },
-            ]
+    // Colores
+    const COLORS = {
+      'deep-red': 'rgba(255, 99, 132, 0.5)',
+      'deep-blue': 'rgba(54, 162, 235, 0.5)',
+    };
+
+    // Crear gráfico de líneas
+    if (chart) chart.destroy();
+    chart = new Chart(lineCtx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Predicción de Delitos',
+            backgroundColor: COLORS['deep-red'],
+            borderColor: COLORS['deep-red'],
+            borderWidth: 2,
+            fill: false,
+            data: prediccionesDataset,
+          },
+          {
+            label: 'Casos Reportados',
+            backgroundColor: COLORS['deep-blue'],
+            borderColor: COLORS['deep-blue'],
+            borderWidth: 2,
+            fill: false,
+            data: casosDataset,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+          },
         },
-        options: {
-            scales: {
-                x: {
-                    type: 'time',
-                    time: {
-                        unit: 'day'
-                    },
-                    title: {
-                        display: true,
-                        text: 'Fecha'
-                    }
-                },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Cantidad'
-                    }
-                }
-            }
-        }
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Fecha',
+            },
+          },
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Cantidad de Delitos',
+            },
+          },
+        },
+      },
     });
+  });
 }
-
-// Datos de ejemplo
-const predData = [
-    { Alcaldía: 'CUAUHTEMOC', Fecha: '2024-01-01', 'Predicción de Delitos': 59 },
-    // Más datos...
-];
-
-const hechoData = [
-    { fecha_hecho: '2024-05-03', hora_hecho: '02:00:00', categoria_delito: 'DELITO DE BAJO IMPACTO', colonia_hecho: 'CENTRO DE AZCAPOTZALCO', alcaldia_catalogo: 'Azcapotzalco', latitud: 19.4812541059562, longitud: -99.186331915711 },
-    // Más datos...
-];
-
-createLinePlot(predData, hechoData);

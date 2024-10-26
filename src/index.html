@@ -327,7 +327,7 @@
                               var avgCrimes = (totalCrimes / weeks.size).toFixed(2);
                   
                               // Find the most frequent crime type
-                              var crimeTypeCounts = d3.rollup(alcaldiaData, v => v.length, d => d.tipo_delito);
+                              var crimeTypeCounts = d3.rollup(alcaldiaData, v => v.length, d => d.categoria_delito);
                               var mostCommonCrime = Array.from(crimeTypeCounts).reduce((max, current) => current[1] > max[1] ? current : max, [null, 0]);
                   
                               // Find the most common hour for crimes
