@@ -1,6 +1,7 @@
 import Chart from 'chart.js/auto';
 import { COLORS } from '../../constants/colors';
 
+
 export default (function () {
   // ------------------------------------------------------
   // @Line Charts
@@ -49,35 +50,60 @@ export default (function () {
   const barChartBox = document.getElementById('bar-chart');
 
   if (barChartBox) {
-    const barCtx = barChartBox.getContext('2d');
-
-    new Chart(barCtx, {
-      type: 'bar',
-      data: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-        datasets: [{
-          label           : 'Dataset 1',
-          backgroundColor : COLORS['deep-purple-500'],
-          borderColor     : COLORS['deep-purple-800'],
-          borderWidth     : 1,
-          data            : [10, 50, 20, 40, 60, 30, 70],
-        }, {
-          label           : 'Dataset 2',
-          backgroundColor : COLORS['light-blue-500'],
-          borderColor     : COLORS['light-blue-800'],
-          borderWidth     : 1,
-          data            : [10, 50, 20, 40, 60, 30, 70],
-        }],
-      },
-
-      options: {
-        responsive: true,
-        legend: {
-          position: 'bottom',
-        },
-      },
-    });
+      const barCtx = barChartBox.getContext('2d');
+  
+      // Cargar datos desde CSV y luego inicializar el gráfico
+      d3.csv("nombre_archivo.csv").then(data => {
+          // Asumiendo que el CSV tiene columnas como 'alcaldia_hecho', 'delito', y 'anio_inicio'
+          const labels = [];
+          const alcaldiaData = [];
+          const delitoData = [];
+  
+          // Agrupar datos por 'alcaldia_hecho' y 'delito', y contar los casos
+          const groupData = d3.rollup(data, v => v.length, d => d.alcaldia_catalogo, d => d.categoria_delito);
+  
+          // Convertir los datos agrupados a formato para el gráfico
+          groupData.forEach((delitos, alcaldia) => {
+              labels.push(alcaldia);
+              let count = 0;
+              delitos.forEach((delitoCount) => count += delitoCount);
+              alcaldiaData.push(count);
+          });
+  
+          // Definir colores
+          const COLORS = {
+              'deep-purple-500': 'rgba(103, 58, 183, 0.5)',
+              'deep-purple-800': 'rgba(74, 20, 140, 0.8)',
+          };
+  
+          // Crear el gráfico de barras
+          new Chart(barCtx, {
+              type: 'bar',
+              data: {
+                  labels: labels,
+                  datasets: [
+                      {
+                          label: 'Casos por Alcaldía',
+                          backgroundColor: COLORS['deep-purple-500'],
+                          borderColor: COLORS['deep-purple-800'],
+                          borderWidth: 1,
+                          data: alcaldiaData,
+                      },
+                  ],
+              },
+  
+              options: {
+                  responsive: true,
+                  plugins: {
+                      legend: {
+                          position: 'bottom',
+                      },
+                  },
+              },
+          });
+      });
   }
+  
 
   // ------------------------------------------------------
   // @Area Charts
