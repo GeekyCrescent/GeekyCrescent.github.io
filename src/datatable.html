@@ -3,14 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Data Tables</title>
+    <title>Tabla de Datos</title>
     <link href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/buttons/1.6.1/css/buttons.dataTables.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <style>
-      /* Mantenemos los estilos originales */
       #loader {
         transition: all 0.3s ease-in-out;
         opacity: 1;
@@ -58,12 +53,61 @@
         }
       }
 
-      .csv-input {
-        padding: 10px;
-        margin-bottom: 20px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        width: 100%;
+      /* Estilos para los botones */
+      .btn {
+        padding: 10px 20px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        background-color: #007bff; /* Color de fondo */
+        color: white; /* Color del texto */
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra para un efecto elevado */
+      }
+
+      .btn:hover {
+        background-color: #0056b3; /* Color de fondo al pasar el mouse */
+        transform: scale(1.05); /* Efecto de aumento */
+      }
+
+      .btn:disabled {
+        background-color: #ccc; /* Color de fondo para botones deshabilitados */
+        cursor: not-allowed; /* Cambiar el cursor */
+      }
+
+      .button-container {
+        margin: 20px 0; /* Espaciado superior e inferior */
+      }
+
+      /* Estilos para los filtros */
+      .filter-container {
+        margin-bottom: 20px; /* Espaciado inferior */
+      }
+
+      .filter-container label {
+        margin-right: 10px; /* Espaciado a la derecha de las etiquetas */
+      }
+
+      .filter-container select,
+      .filter-container input {
+        margin-right: 10px; /* Espaciado a la derecha de los selectores */
+        padding: 10px; /* Espaciado interno */
+        border-radius: 5px; /* Bordes redondeados */
+        border: 1px solid #ccc; /* Borde */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra */
+        transition: border-color 0.3s; /* Transición para el borde */
+      }
+
+      .filter-container select:hover,
+      .filter-container input:hover {
+        border-color: #007bff; /* Cambiar color del borde al pasar el mouse */
+      }
+
+      .row-count {
+        margin: 10px 0; /* Espaciado superior e inferior */
+        font-size: 16px; /* Tamaño de fuente */
       }
     </style>
   </head>
@@ -82,71 +126,380 @@
     </script>
 
     <div>
-      <!-- Mantenemos la estructura principal -->
-      <div class="page-container">
-        <main class='main-content bgc-grey-100'>
-          <div id='mainContent'>
-            <div class="container-fluid">
-              <h4 class="c-grey-900 mT-10 mB-30">Data Tables</h4>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="bgc-white bd bdrs-3 p-20 mB-20">
-                    <h4 class="c-grey-900 mB-20">CSV Data Table</h4>
-                    
-                    <!-- Agregamos el input para CSV -->
-                    <input type="file" id="csvFile" accept=".csv" class="csv-input">
-                    
-                    <!-- La tabla será poblada dinámicamente -->
-                    <table id="dataTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                    </table>
+      <div class="sidebar">
+        <div class="sidebar-inner">
+          <div class="sidebar-logo">
+            <div class="peers ai-c fxw-nw">
+              <div class="peer peer-greed">
+                <a class="sidebar-link td-n" href="/">
+                  <div class="peers ai-c fxw-nw">
+                    <div class="peer">
+                      <div class="logo">
+                        <img src="src\assets\static\images\logo_cc-trans_1.png" alt="">
+                      </div>
+                    </div>
+                    <div class="peer peer-greed">
+                      <h5 class="lh-1 mB-0 logo-text">Dashboard againts criminals</h5>
+                    </div>
                   </div>
+                </a>
+              </div>
+              <div class="peer">
+                <div class="mobile-toggle sidebar-toggle">
+                  <a href="" class="td-n">
+                    <i class="ti-arrow-circle-left"></i>
+                  </a>
                 </div>
               </div>
             </div>
           </div>
-        </main>
 
-        <footer class="bdT ta-c p-30 lh-0 fsz-sm c-grey-600">
-          <span>Copyright © 2024 Designed by <a href="https://colorlib.com" target="_blank" rel="nofollow noopener noreferrer" title="Colorlib">Colorlib</a>. All rights reserved.</span>
-        </footer>
+          <ul class="sidebar-menu scrollable pos-r">
+            <li class="nav-item mT-30 actived">
+              <a class="sidebar-link" href="/">
+                <span class="icon-holder">
+                  <i class="c-blue-500 ti-home"></i>
+                </span>
+                <span class="title">Dashboard</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class='sidebar-link' href="charts.html">
+                <span class="icon-holder">
+                  <i class="c-indigo-500 ti-bar-chart"></i>
+                </span>
+                <span class="title">Gráficos</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class='sidebar-link' href="chat.html">
+                <span class="icon-holder">
+                  <i class="c-deep-purple-500 ti-comment-alt"></i>
+                </span>
+                <span class="title">Chat</span>
+              </a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="dropdown-toggle" href="javascript:void(0);">
+                <span class="icon-holder">
+                  <i class="c-orange-500 ti-layout-list-thumb"></i>
+                </span>
+                <span class="title">Tablas</span>
+                <span class="arrow">
+                  <i class="ti-angle-right"></i>
+                </span>
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a class='sidebar-link' href="datatable.html">Data Table</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="dropdown-toggle" href="javascript:void(0);">
+                <span class="icon-holder">
+                  <i class="c-purple-500 ti-map"></i>
+                </span>
+                <span class="title">Maps</span>
+                <span class="arrow">
+                  <i class="ti-angle-right"></i>
+                </span>
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a href="vector-maps.html">Vector Map</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
 
-    <script>
-      $(document).ready(function() {
-        let dataTable = null;
+      <div class="page-container">
+        <div class="header navbar">
+          <div class="header-container">
+            <ul class="nav-left">
+              <li>
+                <a id='sidebar-toggle' class="sidebar-toggle" href="javascript:void(0);">
+                  <i class="ti-menu"></i>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
 
-        // Función para manejar el archivo CSV
-        document.getElementById('csvFile').addEventListener('change', function(e) {
-          const file = e.target.files[0];
-          
-          Papa.parse(file, {
-            header: true,
-            complete: function(results) {
-              // Si ya existe una tabla, destruirla
-              if (dataTable) {
-                dataTable.destroy();
-              }
+            <main class='main-content bgc-grey-100'>
+              <div id='mainContent'>
+                <div class="container-fluid">
+                  <h4 class="c-grey-900 mT-10 mB-30">Tabla de Datos</h4>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                        <h4 class="c-grey-900 mB-20">Delincuencia en CDMX</h4>
 
-              // Obtener las columnas del CSV
-              const columns = results.meta.fields.map(field => ({
-                title: field,
-                data: field
-              }));
+                        <!-- Filtros -->
+                        <div class="filter-container">
+                          <label for="fechaInicioFiltro">Fecha Inicio:</label>
+                          <input type="date" id="fechaInicioFiltro" min="2016-01-01" max="2024-12-31" onchange="filtrarTabla()">
+                          
+                          <label for="fechaFinFiltro">Fecha Fin:</label>
+                          <input type="date" id="fechaFinFiltro" min="2016-01-01" max="2024-12-31" onchange="filtrarTabla()">
+                          
+                          <label for="horaInicioFiltro">Hora Inicio:</label>
+                          <input type="time" id="horaInicioFiltro" onchange="filtrarTabla()">
+                          
+                          <label for="horaFinFiltro">Hora Fin:</label>
+                          <input type="time" id="horaFinFiltro" onchange="filtrarTabla()">
+                          
+                          <label for="coloniaFiltro">Colonia:</label>
+                          <select id="coloniaFiltro" onchange="filtrarTabla()">
+                              <option value="">Todas</option>
+                              <!-- Las opciones se llenarán dinámicamente -->
+                          </select>
+                          
+                          <label for="categoriaFiltro">Categoría Delito:</label>
+                          <select id="categoriaFiltro" onchange="filtrarTabla()">
+                              <option value="">Todas</option>
+                              <!-- Las opciones se llenarán dinámicamente -->
+                          </select>
+                          
+                          <label for="alcaldiaFiltro">Alcaldía:</label>
+                          <select id="alcaldiaFiltro" onchange="filtrarTabla()">
+                              <option value="">Todas</option>
+                              <!-- Las opciones se llenarán dinámicamente -->
+                          </select>
+                        </div>
 
-              // Inicializar DataTable con los datos del CSV
-              dataTable = $('#dataTable').DataTable({
-                data: results.data,
-                columns: columns,
-                responsive: true,
-                pageLength: 10,
-                dom: 'Bfrtip',
-                order: [[0, 'asc']]
-              });
-            }
-          });
-        });
-      });
-    </script>
-  </body>
-</html>
+                        <div class="button-container">
+                          <button class="btn" onclick="resetearFiltros()">Restablecer Filtros</button>
+                          <button class="btn" onclick="descargarDatosFiltrados()">Descargar Datos Filtrados</button>
+                        </div>
+
+                        <div class="row-count" id="rowCount">Mostrando 0 filas</div>
+                        <div class="row-count" id="totalCount">Total de filas filtradas: 0</div>
+
+                        <table id="nuevaTabla" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                          <thead>
+                            <tr>
+                              <th>Fecha Hecho</th>
+                              <th>Hora Hecho</th>
+                              <th>Categoría Delito</th>
+                              <th>Colonia Hecho</th>
+                              <th>Alcaldía Catalogo</th>
+                              <th>Latitud</th>
+                              <th>Longitud</th>
+                            </tr>
+                          </thead>
+                          <tbody id="tablaCuerpo">
+                            <!-- Los datos se cargarán aquí -->
+                          </tbody>
+                        </table>
+
+                        <div id="paginacion">
+                          <button id="prevBtn" class="btn" onclick="cambiarPagina(-1)">Anterior</button>
+                          <button id="nextBtn" class="btn" onclick="cambiarPagina(1)">Siguiente</button>
+                        </div>
+
+                        <script>
+                          let datos = [];
+                          let paginaActual = 0;
+                          const filasPorPagina = 15;
+
+                          // Función para cargar datos desde el archivo CSV
+                          fetch('nombre_archivo_ord.csv')
+                            .then(response => response.text())
+                            .then(data => {
+                              const rows = data.split('\n').slice(1); // Ignorar la primera fila (encabezados)
+                              rows.forEach(row => {
+                                const cols = row.split(',');
+                                if (cols.length > 1) { // Asegurarse de que hay datos
+                                  datos.push(cols.map(col => col.trim()));
+                                }
+                              });
+                              llenarSelectores();
+                              mostrarPagina();
+                              document.getElementById('totalCount').textContent = `Total de filas: ${datos.length}`; // Mostrar total de filas
+                            })
+                            .catch(error => console.error('Error al cargar el CSV:', error));
+
+                          function llenarSelectores() {
+                            const fechas = new Set();
+                            const horas = new Set();
+                            const colonias = new Set();
+                            const categorias = new Set();
+                            const alcaldias = new Set();
+
+                            datos.forEach(fila => {
+                              fechas.add(fila[0]); // Suponiendo que la fecha está en la primera columna
+                              horas.add(fila[1]); // Suponiendo que la hora está en la segunda columna
+                              colonias.add(fila[3]); // Suponiendo que la colonia está en la tercera columna
+                              categorias.add(fila[2]); // Suponiendo que la categoría está en la cuarta columna
+                              alcaldias.add(fila[4]); // Suponiendo que la alcaldía está en la quinta columna
+                            });
+
+                            // Llenar los selectores
+                            llenarSelector('fechaInicioFiltro', fechas);
+                            llenarSelector('fechaFinFiltro', fechas);
+                            llenarSelector('horaInicioFiltro', horas);
+                            llenarSelector('horaFinFiltro', horas);
+                            llenarSelector('categoriaFiltro', categorias);
+                            llenarSelector('coloniaFiltro', colonias);
+                            llenarSelector('alcaldiaFiltro', alcaldias);
+                          }
+
+                          function llenarSelector(selectorId, opciones) {
+                            const selector = document.getElementById(selectorId);
+                            const opcionesOrdenadas = Array.from(opciones).sort((a, b) => b.localeCompare(a)); // Ordenar en orden descendente
+                            opcionesOrdenadas.forEach(opcion => {
+                              const optionElement = document.createElement('option');
+                              optionElement.value = opcion;
+                              optionElement.textContent = opcion;
+                              selector.appendChild(optionElement);
+                            });
+                          }
+
+                          function mostrarPagina() {
+                            const tbody = document.getElementById('tablaCuerpo');
+                            tbody.innerHTML = ''; // Limpiar el contenido actual
+                            const inicio = paginaActual * filasPorPagina;
+                            const fin = inicio + filasPorPagina;
+                            const filas = datos.slice(inicio, fin);
+
+                            filas.forEach(fila => {
+                              const tr = document.createElement('tr');
+                              fila.forEach(col => {
+                                const td = document.createElement('td');
+                                td.textContent = col;
+                                tr.appendChild(td);
+                              });
+                              tbody.appendChild(tr);
+                            });
+
+                            // Actualizar el conteo de filas visibles
+                            document.getElementById('rowCount').textContent = `Mostrando ${filas.length} filas`;
+
+                            // Habilitar/deshabilitar botones de paginación
+                            document.getElementById('prevBtn').disabled = paginaActual === 0;
+                            document.getElementById('nextBtn').disabled = fin >= datos.length;
+                          }
+
+                          function cambiarPagina(direccion) {
+                            paginaActual += direccion;
+                            mostrarPagina();
+                          }
+
+                          function filtrarTabla() {
+                            const fechaInicio = document.getElementById('fechaInicioFiltro').value;
+                            const fechaFin = document.getElementById('fechaFinFiltro').value;
+                            const horaInicio = document.getElementById('horaInicioFiltro').value;
+                            const horaFin = document.getElementById('horaFinFiltro').value;
+                            const coloniaFiltro = document.getElementById('coloniaFiltro').value;
+                            const categoriaFiltro = document.getElementById('categoriaFiltro').value;
+                            const alcaldiaFiltro = document.getElementById('alcaldiaFiltro').value;
+
+                            const filasFiltradas = datos.filter(fila => {
+                              const fechaValida = (fechaInicio === "" || fila[0] >= fechaInicio) && (fechaFin === "" || fila[0] <= fechaFin);
+                              const horaValida = (horaInicio === "" || fila[1] >= horaInicio) && (horaFin === "" || fila[1] <= horaFin);
+                              return (
+                                fechaValida &&
+                                horaValida &&
+                                (coloniaFiltro === "" || fila[3] === coloniaFiltro) &&
+                                (categoriaFiltro === "" || fila[2] === categoriaFiltro) &&
+                                (alcaldiaFiltro === "" || fila[4] === alcaldiaFiltro)
+                              );
+                            });
+
+                            // Resetear la página actual y mostrar la primera página de resultados filtrados
+                            paginaActual = 0;
+                            mostrarFilasFiltradas(filasFiltradas);
+                          }
+
+                          function mostrarFilasFiltradas(filasFiltradas) {
+                            const tbody = document.getElementById('tablaCuerpo');
+                            tbody.innerHTML = ''; // Limpiar el contenido actual
+                            const inicio = paginaActual * filasPorPagina;
+                            const fin = inicio + filasPorPagina;
+                            const filas = filasFiltradas.slice(inicio, fin);
+
+                            filas.forEach(fila => {
+                              const tr = document.createElement('tr');
+                              fila.forEach(col => {
+                                const td = document.createElement('td');
+                                td.textContent = col;
+                                tr.appendChild(td);
+                              });
+                              tbody.appendChild(tr);
+                            });
+
+                            // Actualizar el conteo de filas visibles
+                            document.getElementById('rowCount').textContent = `Mostrando ${filas.length} filas`;
+                            // Actualizar el conteo de filas filtradas
+                            document.getElementById('totalCount').textContent = `Total de filas filtradas: ${filasFiltradas.length}`;
+
+                            // Habilitar/deshabilitar botones de paginación
+                            document.getElementById('prevBtn').disabled = paginaActual === 0;
+                            document.getElementById('nextBtn').disabled = fin >= filasFiltradas.length;
+                          }
+
+                          function resetearFiltros() {
+                            document.getElementById('fechaInicioFiltro').value = "";
+                            document.getElementById('fechaFinFiltro').value = "";
+                            document.getElementById('horaInicioFiltro').value = "";
+                            document.getElementById('horaFinFiltro').value = "";
+                            document.getElementById('coloniaFiltro').value = "";
+                            document.getElementById('categoriaFiltro').value = "";
+                            document.getElementById('alcaldiaFiltro').value = "";
+                            paginaActual = 0; // Resetear la página actual
+                            mostrarPagina(); // Mostrar la página original
+                          }
+
+                          function descargarDatosFiltrados() {
+                            const fechaInicio = document.getElementById('fechaInicioFiltro').value;
+                            const fechaFin = document.getElementById('fechaFinFiltro').value;
+                            const horaInicio = document.getElementById('horaInicioFiltro').value;
+                            const horaFin = document.getElementById('horaFinFiltro').value;
+                            const coloniaFiltro = document.getElementById('coloniaFiltro').value;
+                            const categoriaFiltro = document.getElementById('categoriaFiltro').value;
+                            const alcaldiaFiltro = document.getElementById('alcaldiaFiltro').value;
+
+                            const filasFiltradas = datos.filter(fila => {
+                              const fechaValida = (fechaInicio === "" || fila[0] >= fechaInicio) && (fechaFin === "" || fila[0] <= fechaFin);
+                              const horaValida = (horaInicio === "" || fila[1] >= horaInicio) && (horaFin === "" || fila[1] <= horaFin);
+                              return (
+                                fechaValida &&
+                                horaValida &&
+                                (coloniaFiltro === "" || fila[3] === coloniaFiltro) &&
+                                (categoriaFiltro === "" || fila[2] === categoriaFiltro) &&
+                                (alcaldiaFiltro === "" || fila[4] === alcaldiaFiltro)
+                              );
+                            });
+
+                            // Convertir los datos filtrados a CSV
+                            let csvContent = "data:text/csv;charset=utf-8," 
+                              + filasFiltradas.map(e => e.join(",")).join("\n");
+
+                            // Crear un enlace para descargar el archivo
+                            const encodedUri = encodeURI(csvContent);
+                            const link = document.createElement("a");
+                            link.setAttribute("href", encodedUri);
+                            link.setAttribute("download", "datos_filtrados.csv");
+                            document.body.appendChild(link); // Requerido para Firefox
+
+                            link.click(); // Descargar el archivo
+                            document.body.removeChild(link); // Limpiar el DOM
+                          }
+                        </script>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </main>
+
+            <footer class="bdT ta-c p-30 lh-0 fsz-sm c-grey-600">
+              <span>Copyright © 2024 Cocoteros.  All rights reserved.</span>
+            </footer>
+          </div>
+        </div>
+      </body>
+    </html>
