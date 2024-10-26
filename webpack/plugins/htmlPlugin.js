@@ -5,6 +5,7 @@ const
 
 const titles = {
   'index': 'Dashboard',
+  'blank': 'Blank',
   'charts': 'Charts',
   'datatable': 'Datatable',
   'chat': 'Chat',

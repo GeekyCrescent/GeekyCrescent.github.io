@@ -35,12 +35,9 @@
         animation: sk-scaleout 1.0s infinite ease-in-out;
       }
 
-      @-webkit-keyframes sk-scaleout {
-        0% { -webkit-transform: scale(0) }
-        100% {
-          -webkit-transform: scale(1.0);
-          opacity: 0;
-        }
+      @keyframes sk-scaleout {
+        0% { transform: scale(0); }
+        100% { transform: scale(1.0); opacity: 0; }
       }
 
       @keyframes sk-scaleout {
@@ -56,27 +53,34 @@
       #chat-box {
         height: calc(100vh - 60px);
         overflow: auto;
+        display: flex;
+        flex-direction: column;
       }
+
       .user-message, .bot-message {
         margin: 10px;
         padding: 10px;
         border-radius: 10px;
         max-width: 60%;
       }
+
       .user-message {
         background-color: #d1e7dd;
         align-self: flex-end;
       }
+
       .bot-message {
         background-color: #f8d7da;
         align-self: flex-start;
       }
+
       .chat-input-container {
         display: flex;
         padding: 10px;
         background: #fff;
         border-top: 1px solid #ccc;
       }
+
       .chat-input-container input {
         flex: 1;
         padding: 10px;
@@ -84,6 +88,7 @@
         border-radius: 5px;
         margin-right: 10px;
       }
+
       .chat-input-container button {
         padding: 10px 20px;
         border: none;
@@ -92,8 +97,15 @@
         border-radius: 5px;
         cursor: pointer;
       }
+
       .chat-input-container button:hover {
         background-color: #0056b3;
+      }
+
+      .typing-indicator {
+        margin: 10px;
+        font-style: italic;
+        color: #888;
       }
     </style>
   </head>
@@ -252,14 +264,7 @@
       <div class="page-container">
         <!-- ### $Topbar ### -->
         <div class="header navbar">
-          <div class="header-container">
-            <ul class="nav-left">
-              <li>
-                <a id='sidebar-toggle' class="sidebar-toggle" href="javascript:void(0);">
-                  <i class="ti-menu"></i>
-                </a>
-              </li>
-          </div>
+          <!-- Header content here -->
         </div>
 
         <!-- ### $App Screen Content ### -->
@@ -291,12 +296,9 @@
                       </div>
                     </div>
                     <div class="layer w-100 fxg-1 bgc-grey-200 scrollable pos-r">
-                      <!-- Chat Box -->
-                      <div class="p-20 gapY-15">
-                        <!-- Chat Conversation -->
-                    </div>
-                    <div class="layer w-100 fxg-1 bgc-grey-200 p-20" id="chat-container">
-                      <!-- Aquí se mostrarán los mensajes del chat -->
+                      <div class="p-20 gapY-15" id="chat-container">
+                        <!-- Aquí se mostrarán los mensajes del chat -->
+                      </div>
                     </div>
                     <div class="layer w-100">
                       <div class="chat-input-container">
@@ -310,112 +312,57 @@
             </div>
           </div>
         </main>
+
         <script>
           document.addEventListener('DOMContentLoaded', function() {
             const chatContainer = document.getElementById('chat-container');
             const chatInput = document.getElementById('chat-input');
             const chatButton = document.getElementById('chat-button');
-          
-            chatButton.addEventListener('click', function() {
+
+            chatButton.addEventListener('click', async function() {
               const userMessage = chatInput.value;
               if (userMessage.trim() === '') return;
-          
+
               // Mostrar el mensaje del usuario
               const userMessageElement = document.createElement('div');
               userMessageElement.className = 'user-message';
               userMessageElement.textContent = userMessage;
               chatContainer.appendChild(userMessageElement);
-          
-              // Llamar a la API de Gemini
-              fetch('https://api.gemini.com/v1/chat', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': 'Bearer AIzaSyBdq-wZrwuD7YiXhrXumZWy3bdKnoTKrQQ' // Reemplaza con tu clave API
-                },
-                body: JSON.stringify({ message: userMessage })
-              })
-              .then(response => response.json())
-              .then(data => {
+
+              // Mostrar el indicador de "escribiendo"
+              const typingIndicator = document.createElement('div');
+              typingIndicator.className = 'typing-indicator';
+              typingIndicator.textContent = 'Detective AI está escribiendo...';
+              chatContainer.appendChild(typingIndicator);
+
+              // Llamar a la API de Google Generative AI
+              try {
+                const result = await model.generateContent(userMessage);
+                // Eliminar el indicador de "escribiendo"
+                chatContainer.removeChild(typingIndicator);
+
                 // Mostrar la respuesta del chatbot
                 const botMessageElement = document.createElement('div');
                 botMessageElement.className = 'bot-message';
-                botMessageElement.textContent = data.response;
+                botMessageElement.textContent = result.response.text();
                 chatContainer.appendChild(botMessageElement);
-              })
-              .catch(error => {
+              } catch (error) {
                 console.error('Error:', error);
-              });
-          
+                chatContainer.removeChild(typingIndicator);
+              }
+
               // Limpiar el campo de entrada
               chatInput.value = '';
             });
           });
         </script>
-                            </div>
-                            <div class="layer w-100">
-                              <!-- Chat Send -->
-                              <div class="p-20 bdT bgc-white">
-                                <div class="pos-r">
-                                  <input type="text" class="form-control bdrs-10em m-0" placeholder="Say something...">
-                                  <button type="button" class="btn btn-primary bdrs-50p w-2r p-0 h-2r pos-a r-1 t-1 btn-color">
-                                    <i class="fa fa-paper-plane-o"></i>
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </main>
-                <script type="module">
-                  import { GoogleGenerativeAI } from "@google/generative-ai";
-        
-                  const API_KEY = "AIzaSyBdq-wZrwuD7YiXhrXumZWy3bdKnoTKrQQ"; // Reemplaza con tu clave API
-                  const genAI = new GoogleGenerativeAI(API_KEY);
-                  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-        
-                  document.addEventListener('DOMContentLoaded', function() {
-                    const chatContainer = document.getElementById('chat-container');
-                    const chatInput = document.getElementById('chat-input');
-                    const chatButton = document.getElementById('chat-button');
-                  
-                    chatButton.addEventListener('click', async function() {
-                      const userMessage = chatInput.value;
-                      if (userMessage.trim() === '') return;
-                  
-                      // Mostrar el mensaje del usuario
-                      const userMessageElement = document.createElement('div');
-                      userMessageElement.className = 'user-message';
-                      userMessageElement.textContent = userMessage;
-                      chatContainer.appendChild(userMessageElement);
-                  
-                      // Llamar a la API de Google Generative AI
-                      try {
-                        const result = await model.generateContent(userMessage);
-                        const botMessageElement = document.createElement('div');
-                        botMessageElement.className = 'bot-message';
-                        botMessageElement.textContent = result.response.text();
-                        chatContainer.appendChild(botMessageElement);
-                      } catch (error) {
-                        console.error('Error:', error);
-                      }
-                  
-                      // Limpiar el campo de entrada
-                      chatInput.value = '';
-                    });
-                  });
-                </script>
-              </div>
-            </div>
-          </body>
-        </html>
-
+      </div>
+    </div>
+  </body>
+</html>
         <!-- ### $App Screen Footer ### -->
         <footer class="bdT ta-c p-30 lh-0 fsz-sm c-grey-600">
-          <span>Copyright © 2024 Cocoteros.  All rights reserved.</span>
+          <span>Copyright © 2024 Cocoteros. All rights reserved.</span>
         </footer>
       </div>
     </div>
