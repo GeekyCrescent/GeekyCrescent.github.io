@@ -13,7 +13,6 @@ const titles = {
   'email': 'Email',
   'ui': 'UI',
   'vector-maps': 'Vector Maps',
-  'basic-table': 'Basic Table',
   'test': 'Test',
 };
 
