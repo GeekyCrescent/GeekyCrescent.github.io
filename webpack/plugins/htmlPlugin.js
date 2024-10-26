@@ -9,6 +9,7 @@ const titles = {
   'charts': 'Charts',
   'compose': 'Compose',
   'datatable': 'Datatable',
+  'chat': 'Chat',
   'email': 'Email',
   'ui': 'UI',
   'vector-maps': 'Vector Maps',

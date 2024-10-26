@@ -1,13 +1,13 @@
 {
-  "name": "adminator",
-  "version": "2.1.0",
+  "name": "chat-app",
+  "version": "1.0.0",
   "private": true,
   "description": "HTML Admin Template",
   "scripts": {
-    "start": "webpack server",
+    "start": "parcel src/chat.html",
     "dev": "webpack-dashboard -t 'Project' -- webpack server",
     "clean": "shx rm -rf ./dist",
-    "build": "npm run clean && cross-env webpack",
+    "build": "parcel build src/chat.html",
     "release:minified": "npm run clean && NODE_ENV=production MINIFY=true cross-env webpack",
     "release:unminified": "npm run clean && NODE_ENV=production MINIFY=false cross-env webpack",
     "preview": "cross-env webpack server",
@@ -38,6 +38,7 @@
     "html-webpack-plugin": "^5.6.0",
     "imagemin-webpack-plugin": "^2.4.2",
     "mini-css-extract-plugin": "^2.9.0",
+    "parcel": "^2.0.0",
     "postcss": "^8.4.38",
     "postcss-loader": "^8.1.1",
     "postcss-preset-env": "^9.5.13",
@@ -58,6 +59,7 @@
     "@fullcalendar/interaction": "^6.1.11",
     "@fullcalendar/list": "^6.1.11",
     "@fullcalendar/timegrid": "^6.1.11",
+    "@google/generative-ai": "^1.0.0",
     "@popperjs/core": "^2.11.6",
     "babel-polyfill": "^6.26.0",
     "bootstrap": "^5.3.3",
@@ -78,5 +80,9 @@
     "perfect-scrollbar": "^1.5.1",
     "plotly.js": "^2.35.2",
     "skycons": "^1.0.0"
-  }
+  },
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
