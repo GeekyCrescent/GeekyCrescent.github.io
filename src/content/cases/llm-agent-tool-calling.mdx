@@ -1,0 +1,45 @@
+---
+order: 1
+title: LLM agent with tool-calling, in production
+summary: A conversational agent that takes a customer from a free-text message on WhatsApp or Telegram to a booked appointment. No forms, no human in the middle.
+status: In production
+role: Owner of the AI and serverless layer
+clientType: B2B SaaS platform (my employer's product)
+figures:
+  - value: '4'
+    label: tools exposed to the agent
+  - value: '5'
+    label: fixes shipped after a live pilot
+  - value: '3 of 5'
+    label: fixes that were prompt changes unit tests can't cover
+stack: [Amazon Bedrock Agents, AWS Lambda, API Gateway, SQS FIFO, HMAC request signing, Node.js]
+diagram: /diagrams/llm-agent-tool-calling.png
+diagramAlt: Messaging channels feed API Gateway and a Lambda, which queues messages in SQS FIFO for a second Lambda that drives a Bedrock Agent; the agent calls a Lambda action group that reaches the product backend through HMAC-signed endpoints.
+---
+
+## The client's need
+
+Clinics on the platform took bookings by phone and web forms. The goal was to let people book the way they already talk: a message on WhatsApp or Telegram, in their own words, ending in a real appointment on a real schedule. That means the model cannot just chat. It has to act on live data, across many tenants, without becoming a security hole.
+
+## What I proposed
+
+I own the AI and serverless layer. Messages enter through API Gateway, are acknowledged fast and queued in SQS FIFO, and a second Lambda drives an Amazon Bedrock Agent through the conversation.
+
+<DecisionTable rows={[
+  { requirement: 'Several messaging channels', decision: 'A channel abstraction: one file per channel', why: 'Adding a channel is a new file in channels/, not a fork of the runtime.' },
+  { requirement: 'Bursts, ordering, retries', decision: 'Fast ack, then SQS FIFO between two Lambdas', why: 'Messages from one person stay in order and nothing is lost when traffic spikes.' },
+  { requirement: 'The agent must act, not only talk', decision: 'Lambda action group with 4 tools', why: 'Global search across tenants, schedule lookup, current date and booking. Small, explicit tools the model cannot misuse.' },
+  { requirement: 'Trust between the agent and the backend', decision: 'HMAC request signing', why: 'The product backend only accepts calls the serverless layer actually signed.' },
+]} />
+
+## The hard call
+
+> The caller's identity comes from the messaging platform's webhook metadata only. Never from anything the person types or the model generates.
+
+That single rule is the difference between a booking bot and an account-takeover vector, so I specified it as a hard requirement of the runtime.
+
+The second lesson came from a live pilot with practising professionals. I turned what they found into five fixes and shipped them: literal-time handling and overlap detection, city filtering without geodata, correct gendered and plural Spanish, a notice when a session restarts after its 30-minute memory window, and locking the reply language. **Three of the five were prompt changes**, which no unit test can verify. They required structured live conversation testing.
+
+## Outcome
+
+In production, with all five pilot fixes shipped.

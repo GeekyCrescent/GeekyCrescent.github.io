@@ -1,0 +1,42 @@
+---
+order: 5
+title: 'Next.js web app: design system, security and a production bug'
+summary: A results portal that reads from a legacy system of record in real time and stores nothing. I built its screens, its design system and its login, and found a data bug by measuring instead of guessing.
+status: In development · deployed to QA
+role: Full-stack developer (one of two)
+clientType: Private hospital network
+figures:
+  - value: 20/24
+    label: security audit findings closed
+  - value: 13 → 5
+    label: duplicated rows fixed at the source
+  - value: −65%
+    label: payload on the affected path
+stack: [Next.js 16, React 19, TypeScript, Tailwind CSS v4, Auth.js v5, Drizzle ORM, PostgreSQL, Redis, Vitest, Playwright, Oracle Cloud]
+diagram: /diagrams/nextjs-security-and-prod-bug.png
+diagramAlt: The browser talks to a Next.js app with its own auth and audit tables in PostgreSQL and a Redis token cache; the app reads records in real time from a legacy system of record through an integration middleware layer and persists none of them.
+---
+
+## The client's need
+
+Results for a large network's customers were scattered across messages, email links and separate vendor platforms. The portal unifies them, reading in real time from a legacy system of record through an integration middleware layer, and **stores none of that data itself**. I am one of two full-stack developers, with a project manager, an architect and a cloud engineer.
+
+## What I proposed
+
+I designed and built all five product screens straight in React, skipping standalone mockups so the design is the implementation: login, a two-step registration with transactional validation, password recovery, profile, and a results dashboard with search and filters.
+
+<DecisionTable rows={[
+  { requirement: 'A consistent, accessible UI', decision: 'A small design system: 6 shared components and 18 inline icons', why: 'Tokenised brand palette in Tailwind v4 and zero icon dependencies.' },
+  { requirement: 'Safe sign-in', decision: 'Auth.js v5 with credentials and JWT, bcrypt, lockout tables', why: '3 attempts per 5 minutes per email, 30-minute idle session, 8-hour hard cap. 34 tests green.' },
+  { requirement: 'Close the security audit', decision: 'CSP with nonces, per-origin rate limits, redirect allowlist, append-only audit log via database triggers', why: '20 of 24 findings closed. The other four each have a named owner, and one accepted risk is written into the code so nobody fixes it without knowing why.' },
+]} />
+
+## The hard call
+
+> QA reported two symptoms. I measured instead of guessing, and found one cause.
+
+The system of record returns one row per version of a report, so a single result arrived up to nine times: **13 rows for 5 results**, and paginated records reappeared across pages. I fixed it on both sides: a ROW_NUMBER correction in the integration query, and deduplication with latest-version selection in our mapper. That user's payload dropped from **1,331 KB to 461 KB**. Along the way I disproved a suspected pagination bug in another system with probe data, instead of assuming it.
+
+## Outcome
+
+In development and deployed to QA. The codebase runs **842 tests green**, and a parallel review by two reviewers found 0 critical issues and 0 real bugs.

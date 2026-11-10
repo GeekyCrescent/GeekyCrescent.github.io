@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Approach from '../components/Approach.astro';
+import WorkGrid from '../components/WorkGrid.astro';
+import Certifications from '../components/Certifications.astro';
+import OtherProjects from '../components/OtherProjects.astro';
+import About from '../components/About.astro';
+import { SITE } from '../data/site';
+---
+
+<Base title={SITE.title} description={SITE.description}>
+  <Hero />
+  <Approach />
+  <WorkGrid />
+  <Certifications />
+  <OtherProjects />
+  <About />
+</Base>

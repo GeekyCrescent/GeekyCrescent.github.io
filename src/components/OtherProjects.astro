@@ -1,0 +1,49 @@
+---
+import { SITE } from '../data/site';
+---
+
+<section class="wrap section other">
+  <h2 class="section-title">Other projects</h2>
+  <div class="row">
+    {
+      SITE.otherProjects.map((p) => (
+        <div class="item">
+          <h3>{'url' in p ? <a href={p.url}>{p.name} ↗</a> : p.name}</h3>
+          <p>{p.text}</p>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .other {
+    padding-top: 0;
+  }
+  .row {
+    display: grid;
+    gap: 1.5rem;
+  }
+  @media (min-width: 768px) {
+    .row {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 2.5rem;
+    }
+  }
+  h3 {
+    font-size: 1.1rem;
+    letter-spacing: -0.015em;
+  }
+  h3 a {
+    text-decoration: none;
+    color: var(--accent);
+  }
+  h3 a:hover {
+    text-decoration: underline;
+  }
+  p {
+    margin: 0.4rem 0 0;
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+  }
+</style>

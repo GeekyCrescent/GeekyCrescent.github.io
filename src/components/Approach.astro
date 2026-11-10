@@ -1,0 +1,57 @@
+---
+import { SITE } from '../data/site';
+---
+
+<section id="approach" class="approach">
+  <div class="wrap section">
+    <h2 class="section-title">How I work</h2>
+    <ol>
+      {
+        SITE.approach.map((step) => (
+          <li>
+            <span class="verb">{step.verb}</span>
+            <span class="text">{step.text}</span>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .approach {
+    background: var(--surface);
+  }
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: step;
+  }
+  li {
+    display: grid;
+    gap: 0.35rem;
+    padding-block: 1.25rem;
+    border-top: 1px solid var(--line);
+  }
+  li:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  @media (min-width: 768px) {
+    li {
+      grid-template-columns: 14rem 1fr;
+      align-items: baseline;
+      gap: 2rem;
+    }
+  }
+  .verb {
+    font-size: clamp(1.5rem, 3.5vw, 2.1rem);
+    font-weight: 750;
+    letter-spacing: -0.035em;
+  }
+  .text {
+    color: var(--ink-soft);
+    font-size: 1.05rem;
+    max-width: 52ch;
+  }
+</style>

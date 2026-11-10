@@ -1,0 +1,65 @@
+<h2>¿Qué estilo se siente más como tú?</h2>
+<p class="subtitle">Mismo contenido, tres direcciones visuales. Fíjate en la sensación, no en los detalles. Toca la que más te guste.</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="editorial" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f6f3ec;padding:22px 20px;color:#1d1b17;font-family:Georgia,'Times New Roman',serif;text-align:left">
+      <div style="font:600 10px/1 ui-monospace,Menlo,monospace;letter-spacing:.12em;color:#8a6a2f;text-transform:uppercase">Juan Rodrigo Ferro · Sydney</div>
+      <div style="font-size:24px;line-height:1.15;margin:12px 0 10px">I turn client problems into cloud&nbsp;and&nbsp;AI&nbsp;solutions.</div>
+      <div style="font:13px/1.5 -apple-system,Helvetica,sans-serif;color:#4a463e">From the first meeting to the signed-off architecture — AWS, GCP and production GenAI.</div>
+      <div style="border-top:1px solid #d9d2c3;margin-top:16px;padding-top:12px">
+        <div style="font:600 10px/1 ui-monospace,Menlo,monospace;color:#8a6a2f">CASE 04 · PROPOSAL</div>
+        <div style="font-size:16px;margin:6px 0 4px">Event-driven integration with an immutable audit trail</div>
+        <div style="font:12px/1.5 -apple-system,Helvetica,sans-serif;color:#4a463e">Client need → 7 decisions → measured p95 SLO instead of a promise nobody controls.</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A · Editorial</h3>
+      <p>Como un documento técnico bien escrito: papel claro y títulos con serifa. Se lee como un consultor que piensa y escribe propuestas.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="terminal" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0d1117;padding:22px 20px;color:#e6edf3;font-family:-apple-system,Helvetica,sans-serif;text-align:left">
+      <div style="font:12px/1 ui-monospace,Menlo,monospace;color:#7ee787">~/ferro <span style="color:#8b949e">$ whoami</span></div>
+      <div style="font-size:23px;font-weight:700;line-height:1.15;margin:12px 0 10px">Cloud &amp; GenAI engineer.<br><span style="color:#79c0ff">Client problem → architecture → production.</span></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+        <span style="font:11px ui-monospace,Menlo,monospace;border:1px solid #30363d;border-radius:4px;padding:3px 7px;color:#ffa657">AWS GenAI Pro</span>
+        <span style="font:11px ui-monospace,Menlo,monospace;border:1px solid #30363d;border-radius:4px;padding:3px 7px;color:#ffa657">OCI GenAI Pro</span>
+        <span style="font:11px ui-monospace,Menlo,monospace;border:1px solid #30363d;border-radius:4px;padding:3px 7px;color:#8b949e">Bedrock · Lambda · SQS</span>
+      </div>
+      <div style="background:#161b22;border:1px solid #30363d;border-radius:8px;margin-top:16px;padding:12px">
+        <div style="font:11px ui-monospace,Menlo,monospace;color:#8b949e">case_04 · proposal</div>
+        <div style="font-size:15px;font-weight:600;margin:5px 0 3px">Event-driven integration, immutable audit</div>
+        <div style="font-size:12px;color:#8b949e">mTLS · SQS FIFO · S3 Object Lock · 65 sources</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B · Ingeniería oscura</h3>
+      <p>Oscuro, con detalles de terminal y etiquetas técnicas. Grita "ingeniero cloud", pero pesa menos el lado de cliente y propuesta.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="swiss" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#ffffff;padding:22px 20px;color:#0a0a0a;font-family:-apple-system,Helvetica,sans-serif;text-align:left">
+      <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:600"><span>Ferro</span><span style="color:#888">Work · About · CV</span></div>
+      <div style="font-size:27px;font-weight:800;letter-spacing:-.03em;line-height:1.05;margin:16px 0 10px">Cloud &amp; AI,<br>built around the&nbsp;client.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:14px 0">
+        <div><div style="font-size:22px;font-weight:800;color:#2b59ff">6×–36×</div><div style="font-size:10px;color:#666">ASR cost saving modelled</div></div>
+        <div><div style="font-size:22px;font-weight:800;color:#2b59ff">20/24</div><div style="font-size:10px;color:#666">security findings closed</div></div>
+        <div><div style="font-size:22px;font-weight:800;color:#2b59ff">5</div><div style="font-size:10px;color:#666">cloud certifications</div></div>
+      </div>
+      <div style="background:#f2f2f2;border-radius:10px;padding:12px">
+        <div style="font-size:10px;font-weight:700;color:#2b59ff">CASE STUDY · AWS</div>
+        <div style="font-size:15px;font-weight:700;margin:4px 0 2px">Event-driven integration with immutable audit</div>
+        <div style="font-size:12px;color:#555">Proposal · 7 architecture decisions</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C · Limpio con cifras</h3>
+      <p>Blanco, tipografía grande y un solo color de acento. Los números al frente: impacto rápido para quien solo escanea.</p>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,52 @@
+---
+import { getCollection } from 'astro:content';
+import CaseCard from './CaseCard.astro';
+
+const cases = (await getCollection('cases')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<section id="work" class="wrap section">
+  <h2 class="section-title">Selected work</h2>
+  <div class="grid">
+    {
+      cases.map((c, i) => (
+        <CaseCard
+          slug={c.id}
+          title={c.data.title}
+          status={c.data.status}
+          clientType={c.data.clientType}
+          isPublicCode={Boolean(c.data.codeUrl)}
+          isFeatured={i === 0}
+        />
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .grid {
+    display: grid;
+    gap: 1rem;
+  }
+  @media (min-width: 720px) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1080px) {
+    .grid {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+    /* Rhythm for six cases: 4 + 2, then 2 + 2 + 2, then the open-source one full width. */
+    .grid > :global(*) {
+      grid-column: span 2;
+    }
+    .grid > :global(:first-child) {
+      grid-column: span 4;
+    }
+    .grid > :global(:last-child) {
+      grid-column: span 6;
+      min-height: 8rem;
+    }
+  }
+</style>

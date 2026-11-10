@@ -1,0 +1,77 @@
+---
+interface Props {
+  slug: string;
+  title: string;
+  status: string;
+  clientType: string;
+  isPublicCode: boolean;
+  isFeatured?: boolean;
+}
+
+const { slug, title, status, clientType, isPublicCode, isFeatured = false } = Astro.props;
+---
+
+<a class:list={['card', { featured: isFeatured }]} href={`/work/${slug}/`} data-testid="case-card">
+  <span class="status">{status}</span>
+  <h3>{title}</h3>
+  <span class="meta">{isPublicCode ? 'Code on GitHub' : clientType}</span>
+  <span class="arrow" aria-hidden="true">→</span>
+</a>
+
+<style>
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    min-height: 11rem;
+    padding: 1.4rem 1.4rem 1.25rem;
+    background: var(--surface);
+    border-radius: var(--radius);
+    text-decoration: none;
+    transition:
+      transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+      background 0.25s ease;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    background: #eaecf0;
+  }
+  .featured {
+    background: var(--accent);
+    color: #fff;
+  }
+  .featured:hover {
+    background: var(--accent-ink);
+  }
+  .status {
+    font-size: 0.78rem;
+    font-weight: 650;
+    color: var(--accent);
+  }
+  .featured .status,
+  .featured .meta {
+    color: rgb(255 255 255 / 0.85);
+  }
+  h3 {
+    font-size: 1.3rem;
+    letter-spacing: -0.025em;
+    line-height: 1.18;
+    max-width: 24ch;
+  }
+  .meta {
+    margin-top: auto;
+    font-size: 0.85rem;
+    color: var(--ink-faint);
+  }
+  .arrow {
+    position: absolute;
+    right: 1.25rem;
+    bottom: 1.1rem;
+    font-size: 1.1rem;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .card:hover .arrow {
+    transform: translateX(4px);
+  }
+</style>

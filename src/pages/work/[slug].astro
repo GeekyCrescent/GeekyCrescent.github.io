@@ -1,0 +1,122 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import CaseHeader from '../../components/CaseHeader.astro';
+import DecisionTable from '../../components/DecisionTable.astro';
+import ConfidentialNote from '../../components/ConfidentialNote.astro';
+import { SITE } from '../../data/site';
+
+export async function getStaticPaths() {
+  const cases = await getCollection('cases');
+  return cases.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { data } = entry;
+---
+
+<Base title={`${data.title} | ${SITE.shortName}`} description={data.summary}>
+  <article>
+    <CaseHeader {...data} />
+    <figure class="wrap diagram">
+      <a href={data.diagram} aria-label="Open the diagram at full size">
+        <img src={data.diagram} alt={data.diagramAlt} data-testid="case-diagram" loading="lazy" />
+      </a>
+      <figcaption>Tap or click to open at full size.</figcaption>
+    </figure>
+    <div class="wrap body">
+      <Content components={{ DecisionTable }} />
+    </div>
+    <footer class="wrap foot">
+      <p class="stack"><span>Stack</span>{data.stack.join(', ')}</p>
+      {data.codeUrl ? <a class="code" href={data.codeUrl}>View the code on GitHub ↗</a> : <ConfidentialNote />}
+      <a class="back" href="/#work">← All work</a>
+    </footer>
+  </article>
+</Base>
+
+<style>
+  .diagram {
+    margin-block: 0 3rem;
+  }
+  .diagram img {
+    width: 100%;
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: clamp(0.75rem, 3vw, 2rem);
+  }
+  .diagram figcaption {
+    margin-top: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--ink-faint);
+  }
+  .body {
+    max-width: 48rem;
+  }
+  .body :global(h2) {
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+    margin: 3rem 0 1rem;
+  }
+  .body :global(p),
+  .body :global(li) {
+    color: var(--ink-soft);
+    font-size: 1.06rem;
+    max-width: 65ch;
+  }
+  .body :global(strong) {
+    color: var(--ink);
+  }
+  .body :global(blockquote) {
+    margin: 1.5rem 0;
+    padding: 1.25rem 1.4rem;
+    background: var(--surface);
+    border-radius: var(--radius);
+    border-left: 3px solid var(--accent);
+  }
+  .body :global(blockquote p) {
+    margin: 0;
+    color: var(--ink);
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+  .foot {
+    max-width: 48rem;
+    margin-top: 3.5rem;
+    padding-bottom: 5rem;
+    display: grid;
+    gap: 1.25rem;
+    justify-items: start;
+  }
+  .stack {
+    margin: 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    width: 100%;
+  }
+  .stack span {
+    display: block;
+    font-weight: 650;
+    color: var(--ink);
+    margin-bottom: 0.25rem;
+  }
+  .code {
+    padding: 0.75rem 1.2rem;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .back {
+    color: var(--ink-faint);
+    text-decoration: none;
+    font-size: 0.95rem;
+  }
+  .back:hover {
+    color: var(--ink);
+  }
+</style>

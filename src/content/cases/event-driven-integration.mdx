@@ -1,0 +1,48 @@
+---
+order: 3
+title: Event-driven integration with an immutable audit trail
+summary: A proposed pipeline that would translate messages between two incompatible protocols in about two seconds, with an audit log that nobody, not even an administrator, could alter.
+status: Proposal · outcome pending
+role: AWS architecture owner
+clientType: Private hospital, competitive tender
+figures:
+  - value: '7'
+    label: architecture decisions, each with alternatives
+  - value: '65'
+    label: official sources verified
+  - value: 4 + 17
+    label: disqualifying risks and missing questions found in the tender
+stack: [ALB with mTLS, AWS Lambda, SQS FIFO, EventBridge, S3 Object Lock, KMS, Secrets Manager, CloudTrail]
+diagram: /diagrams/event-driven-integration.png
+diagramAlt: A sending system connects over mTLS to an internal load balancer and a Lambda that acknowledges fast and queues in SQS FIFO; a transform Lambda converts the message format and stores it; EventBridge notifies consumers with a reference; every step writes a hash-chained record to S3 with Object Lock.
+---
+
+## The client's need
+
+A competitive tender for a cloud integration platform. The mandatory case: receive messages in a legacy, pipe-delimited format over SOAP, translate them into a modern JSON resource format, store them in a managed data store in about two seconds, notify other systems, and keep an audit trail that cannot be altered. Midway, an addendum turned the tender multi-cloud. **I owned the AWS design**; a colleague owned GCP, and the comparison was joint.
+
+## What I proposed
+
+An event-driven, mostly serverless pipeline, with seven decisions, each with alternatives and a reason.
+
+<DecisionTable rows={[
+  { requirement: 'Private ingress with mutual TLS', decision: 'Internal ALB with mTLS verify and revocation, Lambda target', why: 'API Gateway cannot do mTLS on private APIs or check revocation. The only step away from pure serverless, and it is forced.' },
+  { requirement: 'Translate the message format', decision: 'Lambda with an open-source template engine, as a container image', why: 'No managed service does this translation. Templates keep vendor-specific extensions maintainable.' },
+  { requirement: 'About 2 s to persist', decision: 'SQS FIFO, then Lambda, then the data store', why: 'Decoupling meets the target under normal load and never drops a message in a spike.' },
+  { requirement: 'Notify other systems', decision: 'EventBridge carrying a reference, not the payload', why: 'Consumers subscribe selectively and sensitive data travels less.' },
+  { requirement: 'Immutable audit', decision: 'S3 Object Lock in compliance mode, SHA-256 hash chain, CloudTrail integrity validation', why: 'Real WORM that not even the root user can delete. The managed ledger service was retired in 2025, so the chain is rebuilt on S3.' },
+  { requirement: 'Secrets and identity', decision: 'Secrets Manager, IAM roles, customer-managed KMS keys from day one', why: 'Zero secrets in code. The data store encryption choice is irreversible, so it is made up front.' },
+  { requirement: 'Data protection law', decision: 'Documented cross-border transfer, end-to-end encryption, WORM traceability', why: 'The data store does not exist in-country. Residency is not mandated, but the transfer needs a legal basis.' },
+]} />
+
+Every AWS claim was checked against 2026 official documentation by four parallel research agents: **65 sources**, each capability and limit tied to a URL. The design then went through a compliance and security review, and its findings were folded back in.
+
+## The hard call
+
+> I did not promise the guaranteed two-second synchronous commit the tender implied. I committed a measured p95 SLO.
+
+The provider publishes no latency SLA for that data store, so a guarantee would have been a number nobody controls. Instead: a durable acknowledgement to the sender in tens of milliseconds, graceful degradation without message loss, and a measured proof of concept before any contractual commitment.
+
+## Outcome
+
+Proposal submitted; outcome pending. I also produced a gap analysis against the tender criteria that found **4 disqualifying risks and 17 missing critical questions** for the formal Q&A, the most dangerous being certifications the addendum made mandatory.

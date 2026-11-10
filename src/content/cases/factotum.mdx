@@ -1,0 +1,46 @@
+---
+order: 6
+title: 'Factotum: infrastructure for AI coding agents'
+summary: Launch, follow and approve AI coding agents from your phone, on your own machines. Open source, modular, and built so someone else can run it with their own subscription.
+status: Open source · in daily use
+role: Sole architect and engineer
+clientType: Personal project
+figures:
+  - value: 1,607
+    label: automated tests
+  - value: '16'
+    label: architecture decision records
+  - value: '12'
+    label: features shipped spec-first
+stack: [TypeScript, Node.js, pnpm monorepo, Claude Code CLI, PWA + Web Push, Tailscale, Vitest, Playwright]
+codeUrl: https://github.com/GeekyCrescent/Factotum
+diagram: /diagrams/factotum.png
+diagramAlt: A phone PWA connects over a private mesh network to a daemon on the user's own host; the daemon's small core loads modules, runs the Claude Code CLI headless in a subprocess, keeps an append-only log per session and sends push notifications that the user can approve from the lock screen.
+---
+
+## The client's need
+
+My own. A large share of my engineering work starts with an AI coding agent, and I wanted to launch it, follow it and approve its actions from my phone, on my own machines, without an API key or a central server. I first built that as a private tool, Jarvis. Factotum is the public rewrite, built so **someone else can clone it and run it with their own subscription without touching the code.**
+
+## What I proposed
+
+A deliberately small core that knows how to do nothing in particular. Everything it can do comes from modules, and each person switches on their own.
+
+<DecisionTable rows={[
+  { requirement: 'Use my subscription, not an API key', decision: 'Run the Claude Code CLI headless in a subprocess', why: 'The SDK would require an API key; the CLI uses the subscription that is already paid for.' },
+  { requirement: 'Control from the phone', decision: 'A PWA with Web Push and approval from the notification', why: 'No app store, and an approval is one tap from the lock screen.' },
+  { requirement: 'No central server', decision: 'A private mesh network with TLS between my own hosts', why: 'Nothing is exposed to the internet and every host runs the same artefact.' },
+  { requirement: 'Sessions that survive anything', decision: 'An append-only log per session', why: 'Resume, history and the live view all read from one durable record.' },
+]} />
+
+Features shipped spec-first since: projects and history, AI-generated titles, file references with Tab completion, visible subagents, background services, several sessions per project and voice dictation.
+
+## The hard call
+
+> Measure first, then delete the feature if the numbers say so.
+
+In Jarvis, per-session git worktrees were designed in from the start. After measuring five real sessions, none had written inside its own worktree, and **8 of 11 approval prompts came from that mechanism**. Removing it was the improvement. Factotum was designed around that lesson.
+
+## Outcome
+
+Open source and in daily use: it is how a good part of my engineering work now gets started. **1,607 automated tests**, 16 architecture decision records. Jarvis, the private predecessor, reached 1,069 unit and 597 end-to-end tests.

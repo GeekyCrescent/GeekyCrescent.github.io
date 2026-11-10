@@ -1,0 +1,69 @@
+---
+import { SITE } from '../data/site';
+---
+
+<section class="wrap section certs">
+  <h2 class="section-title">Certifications</h2>
+  <ul>
+    {
+      SITE.certifications.map((c) => (
+        <li class:list={{ pro: c.isPro }}>
+          <span class="issuer">{c.issuer}</span>
+          <span class="name">{c.name}</span>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .certs {
+    padding-top: 0;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+  @media (min-width: 720px) {
+    ul {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1080px) {
+    ul {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+    li {
+      grid-column: span 2;
+    }
+    li.pro {
+      grid-column: span 3;
+    }
+  }
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  li.pro {
+    border-color: var(--accent);
+  }
+  .issuer {
+    font-size: 0.78rem;
+    font-weight: 650;
+    color: var(--ink-faint);
+  }
+  .pro .issuer {
+    color: var(--accent);
+  }
+  .name {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+</style>

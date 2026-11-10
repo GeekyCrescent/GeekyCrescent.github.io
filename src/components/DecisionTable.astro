@@ -1,0 +1,103 @@
+---
+interface Props {
+  rows: { requirement: string; decision: string; why: string }[];
+}
+
+const { rows } = Astro.props;
+---
+
+<div class="scroll" role="region" aria-label="Architecture decisions" tabindex="0">
+  <table>
+    <thead>
+      <tr><th>Requirement</th><th>Decision</th><th>Why</th></tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((r) => (
+          <tr>
+            <td data-label="Requirement">{r.requirement}</td>
+            <td data-label="Decision">{r.decision}</td>
+            <td data-label="Why">{r.why}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .scroll {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 40rem;
+    font-size: 0.93rem;
+  }
+  th,
+  td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.8rem 1rem;
+  }
+  th {
+    background: var(--surface);
+    font-weight: 650;
+  }
+  tbody tr + tr td {
+    border-top: 1px solid var(--line);
+  }
+  td {
+    color: var(--ink-soft);
+  }
+  td:nth-child(2) {
+    color: var(--ink);
+    font-weight: 550;
+  }
+
+  /* On phones each decision becomes a stacked card instead of a sideways-scrolling table. */
+  @media (max-width: 640px) {
+    .scroll {
+      border: 0;
+      overflow: visible;
+    }
+    table {
+      min-width: 0;
+    }
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+    tr {
+      display: block;
+      padding: 1rem 1.1rem;
+      margin-bottom: 0.75rem;
+      background: var(--surface);
+      border-radius: var(--radius);
+    }
+    td {
+      display: block;
+      padding: 0.2rem 0;
+    }
+    tbody tr + tr td {
+      border-top: 0;
+    }
+    td::before {
+      content: attr(data-label);
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 650;
+      color: var(--ink-faint);
+    }
+    td:first-child::before {
+      color: var(--accent);
+    }
+  }
+</style>

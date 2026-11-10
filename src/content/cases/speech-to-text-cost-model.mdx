@@ -1,0 +1,47 @@
+---
+order: 2
+title: 'Speech-to-text + LLM: a cost model and a model choice'
+summary: A production pipeline turns a recorded conversation into a structured note. I was asked whether open-source models could replace the managed ones. I answered with a cost model, not a hunch.
+status: Decision memo · system in production
+role: Research and decision lead
+clientType: B2B SaaS platform (my employer's product)
+figures:
+  - value: 80-99.9%
+    label: of pipeline cost is transcription, not the LLM
+  - value: 6×-36×
+    label: transcription saving modelled, by volume
+  - value: 54-217
+    label: conversations/day where break-even moves
+stack: [Amazon Transcribe, Amazon Bedrock, Whisper large-v3, Voxtral, faster-whisper on EC2 g6, Cost modelling]
+diagram: /diagrams/speech-to-text-cost-model.png
+diagramAlt: Audio goes to a transcription step and then to an LLM that writes the note; two migration routes for transcription are compared by volume, with a third-party open-weight API below about 200 conversations a day and self-hosted faster-whisper on GPU instances above it.
+---
+
+## The client's need
+
+A system in production listens to a conversation, transcribes it with Amazon Transcribe and has an LLM on Amazon Bedrock write a structured note. I was asked to evaluate replacing either or both with open-source models, without changing the interface the rest of the product uses.
+
+## What I proposed
+
+A decision memo with a cost model, a risk analysis and one clear recommendation: **migrate the transcription, not the LLM.**
+
+<DecisionTable rows={[
+  { requirement: 'Find where the money goes', decision: 'Model cost per conversation, step by step', why: 'Transcription is 80-99.9% of the pipeline cost. The LLM is 0.1-20%.' },
+  { requirement: 'Lower the LLM bill if needed', decision: 'Switch model inside Bedrock', why: 'A configuration change at roughly 1/55 of the cost per conversation. Self-hosting cannot save money that is not being spent.' },
+  { requirement: 'Cheaper transcription at low volume', decision: 'Open-weight model from a third party under a data-processing agreement', why: 'Below about 200 conversations a day, renting beats owning GPUs.' },
+  { requirement: 'Cheaper transcription at high volume', decision: 'Self-hosted faster-whisper on EC2 g6 with an async queue', why: 'Above that volume the fixed GPU cost wins. Savings modelled at 6× to 36×.' },
+]} />
+
+Finalists were compared with sources and dates: Voxtral Transcribe 2 and Whisper large-v3 for speech, and Qwen3, gpt-oss-120b, Mistral and OpenAI models against the Bedrock baseline.
+
+## The hard call
+
+> I refused to draw the architecture before measuring.
+
+Two unknowns, real volume and average duration, move the break-even anywhere between 54 and 217 conversations a day. An unconfirmed data-residency requirement could rule out every third-party option. So phase 0 is pulling real numbers from Cost Explorer, not a diagram.
+
+I also named the risk that kills the easy answer. Whisper has a documented failure mode, inventing text during silence, that the current service does not. In a written record that is a false statement. The migration is justified by cost, but **only approved if a pilot shows the significant-error rate does not get worse.** And the baseline had its own problem: it used a locale that supports neither custom language models nor PII redaction, while a neighbouring locale supports both.
+
+## Outcome
+
+Memo delivered internally. The production system keeps running unchanged until phase 0 produces the two numbers the decision depends on.

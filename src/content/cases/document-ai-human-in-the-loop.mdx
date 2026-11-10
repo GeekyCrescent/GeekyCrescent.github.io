@@ -1,0 +1,48 @@
+---
+order: 4
+title: Document AI with a human in the loop
+summary: A legal team was losing cases because deadlines passed unnoticed in spreadsheets. I took it from the first meeting to validated requirements and three architectures.
+status: Requirements & architecture · ready to build
+role: Requirements and architecture author
+clientType: Federal agency
+figures:
+  - value: '3'
+    label: architecture variants trading data residency for capability
+  - value: '15'
+    label: numbered technical decisions + 3 ADRs
+  - value: '0'
+    label: AI dependencies in the first delivery wave, by design
+stack: [OCR cascade, Document classification, Confidence thresholds, Human review queue, AWS, GCP]
+diagram: /diagrams/document-ai-human-in-the-loop.png
+diagramAlt: Documents arrive through three intake channels into a case file; wave 1A registers cases and deadlines with no AI; wave 1B adds OCR, classification and extraction whose output enters a human confirmation queue as a proposal; wave 1C adds deadline computation and cited legal grounding.
+---
+
+## The client's need
+
+The legal team of a federal agency tracked cases in personal spreadsheets. Cases were lost because deadlines passed without a response, and hearings were missed. In this domain, one day late can mean the right to respond is gone for good.
+
+## What I proposed
+
+I took it from a client meeting to a **v2.0 requirements document validated by a legal specialist**. Every requirement carries an evidence mark (said by the client, confirmed by the specialist, verified against a primary source, inferred, assumed, open or withdrawn), and numbers are never reused.
+
+Delivery is cut by legal consequence, not technical convenience:
+
+<DecisionTable rows={[
+  { requirement: 'Stop missing deadlines now', decision: 'Wave 1A: registration and deadlines', why: 'Three intake channels, case files, captured deadlines, alerts, a printable agenda, audit log. No requirement may depend on a model, OCR or a confidence score.' },
+  { requirement: 'Read the volume nobody can read in time', decision: 'Wave 1B: OCR cascade, classification, extraction', why: 'Everything a model produces enters as a proposal in a human confirmation queue, with a confidence threshold for automatic linking.' },
+  { requirement: 'Compute and ground', decision: 'Wave 1C: deadline engine and cited legal grounding', why: 'Deadline computation, timeliness cross-checks and a normative corpus, once the basics are trusted.' },
+]} />
+
+I also produced **three architecture variants** trading data residency against capability (strict residency on GCP, partial on AWS in-country, relaxed on AWS US), three ADRs and 15 numbered technical decisions, plus machine-readable specs so the build can be driven against explicit acceptance criteria.
+
+## The hard call
+
+> Wave 1A uses no AI at all. It is not a bootstrap phase; it is the system's permanent degraded path.
+
+The legal team stops missing hearings while reading quality is still being tuned, and when the model is unavailable, which it will be, the work goes on.
+
+The specialist also corrected the product framing: the lawyers know exactly what to do with a document. What they cannot do is read all of them in time. So the system absorbs volume instead of replacing judgement, and every requirement that looked like replacing a lawyer was withdrawn.
+
+## Outcome
+
+Requirements validated, architecture and specs ready to start Wave 1A. What the specialist did not validate (volume, recovery targets, retention, hardware) stays marked as an assumption. Confirming the domain model does not confirm the sizing.
