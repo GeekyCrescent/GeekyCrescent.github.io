@@ -37,6 +37,11 @@ test('selected work shows six cards linking to their case pages', async ({ page 
   await expect(cards.last()).toContainText('Code on GitHub');
 });
 
+test('other projects lists only the approved ones', async ({ page }) => {
+  const names = await page.locator('section.other h3').allTextContents();
+  expect(names.map((n) => n.replace(' ↗', ''))).toEqual(['FraudFishing', 'Book-collection RAG chatbot']);
+});
+
 test('about section does not mention the intern progression', async ({ page }) => {
   await expect(page.locator('#about')).not.toContainText(/intern/i);
 });

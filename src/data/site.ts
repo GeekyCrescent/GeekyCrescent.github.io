@@ -35,11 +35,6 @@ export const SITE = {
       url: 'https://github.com/GeekyCrescent/fraud-fishing-JS',
     },
     {
-      name: 'todo-ferro',
-      text: 'A task app as a React web client and an Expo mobile client.',
-      url: 'https://github.com/GeekyCrescent/todo-ferro-web',
-    },
-    {
       name: 'Book-collection RAG chatbot',
       text: 'Volunteer project for a community group of about 300 people: Qdrant, reranking, hard-negative evaluation.',
     },
